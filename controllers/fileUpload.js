@@ -111,11 +111,11 @@ exports.upload = function(req, res){
         // console.log(invertSlashes(path));
 
         //get song duration 
-        const buffer = fs.readFileSync(invertSlashes(path)+"/public/song_audio/"+audio_name);
+        // const buffer = fs.readFileSync(invertSlashes(path)+"/public/song_audio/"+audio_name);
         
-        var duration = getmp3Duration(buffer);
-        duration = duration/1000;
-        // duration = 0
+        // var duration = getmp3Duration(buffer);
+        // duration = duration/1000;
+        duration = 0
         // console.log(duration);
                                     
         file_Img.mv('public/song_images/'+ file_Img.name, function(err) {
@@ -152,13 +152,14 @@ exports.delete = (req, res) =>{
     var song_name = post.songName;
     var artist_Name= post.artistName;
 
-    db2.query(`DELETE FROM Song WHERE song_name = ? AND artist_name = ?`, [song_name, artist_Name], (err, result, field) =>{
+    db2.query(`DELETE FROM Song WHERE song_name = ?`, [song_name], (err, result, field) =>{
         if(err){
             return res.render('register', {
                 message: 'Try again: That username is already in use by another user'
             });
         }
         else{
+            console.log(artist_Name);
             return res.render('uploadMusic', {
                 message2: 'Song was Deleted'
             })
