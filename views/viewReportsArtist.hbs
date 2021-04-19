@@ -26,7 +26,60 @@
     </nav>
 
     <div class="container mt-4"> 
-        hi
+        <div class = "row justify-content-center">
+            <div class="col-5">
+                <h2>Followers insight given a time frame</h2>
+
+            </div>
+
+            <div class="col-5">
+                <div class="row">
+                    <h2>Song plays insight given a time frame</h2>
+                </div>
+                <div class="row">
+                    <form action="/songInsights" method="POST">   
+                        <div class="form-group" style="padding-top: 25px;">
+                            
+
+
+                            <label for="dataGroups">Insights for which song?</label>
+                            <select class="form-control" id="dataGroups" name="dataGroups">
+                            {{#each songData}}
+                                <option>{{this.song_name}}</option>
+                            {{/each}}
+                            {{#ifeq moreThanOneSong true}}
+                                <option>All of my songs</option>
+                            {{/ifeq}}
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="padding-top: 25px;">
+                            <label for="activityYear">Activity year</label>
+                            <select class="form-control" id="activityYear" name="activityYear">
+                            <option>2021</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="padding-top: 25px;">
+                            <label for="dateStart">Activity date from</label>
+                            <input class="form-control" type="date" value="2021-01-01" id="dateStart" name="dateStart">
+                        </div>
+                        <div class="form-group" style="padding-top: 25px;"style="padding-bottom: 25px;">
+                            <label for="dateEnd" >Activity date to</label>
+                            <input class="form-control" type="date" value="2021-04-30" id="dateEnd" name="dateEnd">
+                            
+                        </div>
+                        <br>
+                        <button type="submit" class="btn btn-primary">
+                            View Custom Report
+                        </button>
+                    </form> 
+                </div>
+                
+            </div>
+
+            
+           
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>    

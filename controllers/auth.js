@@ -5,8 +5,7 @@ const { v4: uuidv4 } = require('uuid');
 const e = require('express');
 const { async } = require('q');
 const { promisify } = require ('util');
-const fs = require('fs');
-const fileUpload = require('express-fileupload');
+var moment = require('moment');
 //const flash = require('connect-flash');
 
 /* Middleware functions included:
@@ -259,13 +258,15 @@ exports.register =  (req, res)=>{
     //gets the age from the  DOB. getAge is a function that does all the math
     const getAge = birthDate => Math.floor((new Date() - new Date(birthDate).getTime()) / 3.15576e+10)
     const currAge = getAge(DOB);
+    var date = new Date();
+    var formatDate = moment(date).format('YYYY-MM-DD HH:MM:SS');
 
     const artist_id = 0; //SET TO 0 RN CHANGE LATER
 
     //Not a musician, so create a user account
     if(isMusician === false) {
         //Create  the user account and insert it into the database
-        db2.query(`INSERT INTO User SET ?`, {artist_idF: artist_id, user_id: uniqueId, user_name: username, user_email: email, country: country, age: currAge , user_password: password, user_name_display: name});
+        db2.query(`INSERT INTO User SET ?`, {artist_idF: artist_id, user_id: uniqueId, user_name: username, user_email: email, country: country, age: currAge , user_password: password, user_name_display: name, dateTime_created_user: formatDate});
 
         //Cookie stuff, same as before
         const token = jwt.sign({id: uniqueId, type: 'User'}, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXPIRES_IN} );
@@ -282,7 +283,7 @@ exports.register =  (req, res)=>{
 
     }else{
         //Create the musician account and insert it into the database
-        db2.query(`INSERT INTO Artist SET ?`, {artist_id: uniqueId, artist_name: username, artist_email: email, country: country, background_link: '', website_url: personal_url, artist_password: password, artist_name_display: name, biography: biography, fb_url: fb_url, ig_url: ig_url, spotify_url: spotify_url, soundcloud_url: soundcloud_url, age: currAge });
+        db2.query(`INSERT INTO Artist SET ?`, {artist_id: uniqueId, artist_name: username, artist_email: email, country: country, background_link: '', website_url: personal_url, artist_password: password, artist_name_display: name, biography: biography, fb_url: fb_url, ig_url: ig_url, spotify_url: spotify_url, soundcloud_url: soundcloud_url, age: currAge, dateTime_created_artist: formatDate});
         
         //profile pic upload
         // console.log(req.files.formFile.name);
@@ -509,5 +510,27 @@ exports.updateUserProfile = (req, res)=>{
     return res.redirect('/editProfile');
 
 };
+exports.countryReport = (req,res) => {
+    
+    let artists = db.query(`SELECT * FROM Artist`);
+    req.flash('data', artists);
+    return res.redirect('/countryReport');
+
+};
+exports.ageReport = (req,res) => {
+    
+    let artists = db.query(`SELECT * FROM Artist`);
+    req.flash('data', artists);
+    return res.redirect('/ageReport');
+
+};
+exports.filter = (req,res) => {
+    
+    let artists = db.query(`SELECT * FROM Artist`);
+    req.flash('data', artists);
+    return res.redirect('/filter');
+
+};
+
 
 /////////---------------------------------------------------------//////

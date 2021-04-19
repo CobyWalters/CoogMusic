@@ -85,7 +85,20 @@ function loadExplorePane(data) {
         song_item.setAttribute("id", "song-item");
         song_item.song_data = data[i];
         song_item.addEventListener('click', function (event) {
+            fetch('http://localhost:5000/updateCount', {
+                method: "POST",
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({songId: event.currentTarget.song_data["song_id"]}),
+             })
+            .then(response => response.json())
+            .then(data => loadExplorePane(data['data']));
             playSong(event.currentTarget.song_data);
+            //+1 NUMBER OF PLAYS
+            console.log("Eee");
+            //console.log("SD: " + event.currentTarget.song_data["plays"]);            
+
+           
+ 
         });
         var image = document.createElement("img");
         if (data[i]["song_img_path"] == "") {
@@ -101,9 +114,13 @@ function loadExplorePane(data) {
         var song_name = document.createElement("h6");
         song_name.innerHTML = data[i]["song_name"];
         var artist_name = document.createElement("h6");
+
         artist_name.innerHTML = data[i]["artist_name"];
+        var plays = document.createElement("h5");
+        plays.innerHTML = 'Number of plays: '+ data[i]["plays"];
         song_item_text.append(song_name);
         song_item_text.append(artist_name);
+        song_item_text.append(plays);
         song_item.append(image);
         song_item.append(song_item_text);
         song_container.append(song_item);
@@ -142,6 +159,13 @@ function playSong(song_data) {
     play.innerHTML = '<i class="fa fa-pause" aria-hidden="true"></i>';
     playing_song = true;
 	timer = setInterval(rangeSlider, 1000);
+
+
+   
+    console.log("JJJ");
+
+    //song_data["plays"] = song_data["plays"]+1;
+    //console.log(song_data["plays"]);
 }
 
 function muteSound() {

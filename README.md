@@ -69,7 +69,6 @@ Git Hub:
     3 ) View all (local and remote) branches
         git branch -a
 
-    
     PUSHING CHANGES
 
     1 ) Pull any new changes from the main branch before pushing

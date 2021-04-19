@@ -1,5 +1,6 @@
 const mysql = require('mysql2');
 const dotenv = require('dotenv');
+var moment = require('moment');
 let instance = null;
 dotenv.config();
 
@@ -55,10 +56,12 @@ class DbService {
         }
     }
 
-    async getSongDisplays() {
+    async getArtistSongs(artist_name) {
+
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = "SELECT song_id, song_name, artist_name, song_audio_path, song_img_path FROM Song;";
+                const query = `SELECT song_id, song_name, artist_name, song_audio_path, song_img_path, plays FROM Song WHERE artist_name=${artist_name.substring(1)}`;
+                console.log(query);
                 connection.query(query, (err, results) => {
                     if (err) reject(new Error(err.message));
                     resolve(results);
@@ -68,6 +71,74 @@ class DbService {
         } catch (error) {
             console.log(error);
         }
+    }
+
+    async getSongDisplays() {
+        try {
+            const response = await new Promise((resolve, reject) => {
+                const query = "SELECT song_id, song_name, artist_name, song_audio_path, song_img_path, plays FROM Song;";
+                connection.query(query, (err, results) => {
+                    if (err) reject(new Error(err.message));
+                    resolve(results);
+                })
+            });
+            return response;
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    async updateCount(artistId, userId, songId)
+    {
+        //artistId or userId = person logged on, using cookies
+        //console.log(artistId + ' X ' + userId + ' Y ' + songId);
+        if(userId){
+            //console.log("user logged in");
+            try {
+                const response = await new Promise((resolve, reject) => {
+                    var date = new Date();
+                    var formatDate = moment(date).format('YYYY-MM-DD HH:MM:SS');
+                    //console.log("dont unformat for: " + formatDate);
+                    //const query = `INSERT INTO PlayTracker (played_by_artist_id, dateTime_Play, song_by_artist_id) VALUES (\"${artistId}\", ${formatDate}, \"${songId}\")`;
+                    
+                    
+                    connection.query(`INSERT INTO countPlays SET ?`,{played_by_user_id: userId, song_id_played: songId, dateTime_Play: formatDate}, (err, results) => {
+                        if (err) reject(new Error(err.message));
+                        resolve(results);
+                    })
+                    
+                   
+                });
+                //return response;
+            } catch (error) {
+                console.log(error);
+            }
+            
+        }else if(artistId){
+            //console.log("artist logged");
+            try {
+                const response = await new Promise((resolve, reject) => {
+                    var date = new Date();
+                    var formatDate = moment(date).format('YYYY-MM-DD HH:MM:SS');
+                    //console.log("ff: " + formatDate);
+                    //const query = `INSERT INTO PlayTracker (played_by_artist_id, dateTime_Play, song_by_artist_id) VALUES (\"${artistId}\", ${formatDate}, \"${songId}\")`;
+                    
+                    
+                    connection.query(`INSERT INTO countPlays SET ?`,{played_by_artist_id: artistId, song_id_played: songId, dateTime_Play: formatDate}, (err, results) => {
+                        if (err) reject(new Error(err.message));
+                        resolve(results);
+                    })
+                    
+                   
+                });
+                //return response;
+            } catch (error) {
+                console.log(error);
+            }
+
+        }
+
+
     }
 }
 

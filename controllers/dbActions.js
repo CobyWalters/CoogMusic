@@ -58,9 +58,9 @@ exports.viewArtistsAdmin = (req, res)=>{
 //----------> USERS
 exports.viewArtists = (req, res)=>{
     //same as aboev, but selects every Artist
-    let artists = db.query(`SELECT * FROM Artist`);
-    req.flash('data', artists);
+    
     return res.redirect('/viewArtists');
 }
+
 
 /////////---------------------------------------------------------/////
