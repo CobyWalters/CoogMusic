@@ -28,7 +28,7 @@
 
     <div class="container mt-4"> 
 
-    <form action="/auth/register" method="POST">
+    <form action="/auth/register" enctype="multipart/form-data" method="POST" role="form">
 
         <label class="sr-only" for="inlineFormInputGroupUsername2">Username</label>
         <div class="input-group mb-2 mr-sm-2">
@@ -122,12 +122,12 @@
             <input type="personal" class="form-control" name="personal_url" id="personal_url" aria-describedby="basic-addon3">
             </div>
 
-            <!--
+{{!--             
             <div class="mb-3">
             <label for="formFile" class="form-label">Musician profile picture</label>
-            <input class="form-control" type="file" id="formFile">
-            </div>
-            -->
+            <input class="form-control" type="file" id="formFile" name ="formFile" accept=""/>
+            </div> --}}
+            
 
         </div>
 

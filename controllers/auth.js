@@ -5,6 +5,8 @@ const { v4: uuidv4 } = require('uuid');
 const e = require('express');
 const { async } = require('q');
 const { promisify } = require ('util');
+const fs = require('fs');
+const fileUpload = require('express-fileupload');
 //const flash = require('connect-flash');
 
 /* Middleware functions included:
@@ -279,10 +281,19 @@ exports.register =  (req, res)=>{
         return res.redirect('/successRegister_User');
 
     }else{
-        
         //Create the musician account and insert it into the database
         db2.query(`INSERT INTO Artist SET ?`, {artist_id: uniqueId, artist_name: username, artist_email: email, country: country, background_link: '', website_url: personal_url, artist_password: password, artist_name_display: name, biography: biography, fb_url: fb_url, ig_url: ig_url, spotify_url: spotify_url, soundcloud_url: soundcloud_url, age: currAge });
         
+        //profile pic upload
+        // console.log(req.files.formFile.name);
+        // var file_Img = req.files.formFile;
+        // var file_name = file_img.name;
+        // file_Img.mv('public/user_profileImgs/'+file_img.name, function(err){
+        //     if(err)
+        //         return res.status(500).send(err);
+        //     db2.query(`INSERT INTO Artist ?`,{artist_profile_pic: file_name});
+        // });
+
         //Cookie stuuff, same as before
         const token = jwt.sign({id: uniqueId, type: 'Artist'}, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXPIRES_IN} );
 
