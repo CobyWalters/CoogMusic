@@ -54,8 +54,6 @@ exports.upload = function(req, res){
     //const buffer = fs.readFileSync('/Users/Student/Desktop/CoogMusic/CoogMusic/public/song_audio/'+audio_name);
     //var duration = getmp3Duration(buffer);
     //duration = duration/1000;
-    duration = 0;
-    console.log(duration);
   
 
 
@@ -88,11 +86,11 @@ exports.upload = function(req, res){
     path = path.substr(2);
     console.log(invertSlashes(path));
 
-    fs.rename(invertSlashes(path)+"/public/song_audio/"+audio_name, invertSlashes(path)+"/public/song_audio/" +songId+".mp3", function(err) {
+    fs.rename(invertSlashes(path)+"/public/song_audio/"+audio_name, invertSlashes(path)+"/public/song_audio/" + song_audio_path, function(err) {
         if ( err ) console.log('ERROR: ' + err);
     });
 
-    fs.rename(invertSlashes(path)+"/public/song_images/"+img_name, invertSlashes(path)+"/public/song_images/" +songId+".jpg", function(err) {
+    fs.rename(invertSlashes(path)+"/public/song_images/"+img_name, invertSlashes(path)+"/public/song_images/" + song_img_path, function(err) {
         if ( err ) console.log('ERROR: ' + err);
     });
     
@@ -151,11 +149,6 @@ exports.upload = function(req, res){
         message = "This format is not allowed , please upload file with '.png','.jpg'";
         res.render('uploadMusic',{message: message});
     }
-
-    // fs.rename(invertSlashes(path)+"/public/song_audio/"+audio_name, invertSlashes(path)+"/public/song_audio/" +song_id+".jpg", function(err) {
-    //     if ( err ) console.log('ERROR: ' + err);
-    //     console.log('audio renamed!')
-    // });
     
 };
 
