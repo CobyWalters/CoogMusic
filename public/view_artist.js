@@ -24,10 +24,7 @@ function loadArtistSongs(data) {
             playSong(event.currentTarget.song_data);
             //+1 NUMBER OF PLAYS
             console.log("Eee");
-            //console.log("SD: " + event.currentTarget.song_data["plays"]);            
-
-           
- 
+            //console.log("SD: " + event.currentTarget.song_data["plays"]);
         });
         var image = document.createElement("img");
         if (data[i]["song_img_path"] == "") {
