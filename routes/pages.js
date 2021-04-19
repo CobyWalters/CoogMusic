@@ -6,6 +6,9 @@ const authController = require('../controllers/auth');
 const mysql = require('sync-mysql');
 const mysqladd = require('mysql2');
 
+var phantom = require('phantom');
+
+
 /* Middleware functions included:
 exports.viewUsers
 exports.viewArtists
@@ -216,11 +219,85 @@ router.post('/artistProfile/:artistId', authController.getAccount, (req, res)=>{
 
 //////////////// ADMIN PAGE ////////////////////////////////
 router.get('/viewUsers', (req, res)=>{
-    res.render('viewUsers',{userData: req.flash('data')});
+    let users = db.query(`SELECT * FROM User`);
+    //console.log(users.length); 
+    res.render('viewUsers',{userData: users, count: users.length});
 });
 
 router.get('/viewArtistsAdmin', (req, res)=>{
-    res.render('viewArtistsAdmin',{artistData: req.flash('data')});
+    let artists = db.query(`SELECT * FROM Artist`)
+    res.render('viewArtistsAdmin',{artistData: artists, count: artists.length});
+});
+
+router.get('/viewSongsAdmin', (req, res)=>{
+    let songs = db.query(`SELECT * FROM Song`)
+    res.render('viewSongsAdmin',{songData: songs, count: songs.length});
+});
+
+router.post('/viewCMActivity', (req, res)=>{
+    //req.body = has dataGroups, activityYear, dateStart, dateEnd
+        /*
+    let users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ?`,[startDate, endDate]);
+    let artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ?`,[startDate, endDate]);
+    let songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ?`,[req.body.dateStart, req.body.dateEnd]);
+    */
+    console.log(req.body);
+    const startDate = req.body.dateStart + ' 00:00:00';
+    const endDate = req.body.dateEnd + ' 23:59:59';
+    var users;
+    var userCount = 0;
+    var artists;
+    var artistCount = 0;
+    var songs;
+    var songCount = 0;
+
+    if(req.body.dataGroups == 'User'){
+        users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ? ORDER BY dateTime_created_user ASC`,[startDate, endDate]);
+        userCount = users.length;
+
+    }else if(req.body.dataGroups == 'Musician'){
+        artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ? ORDER BY dateTime_created_artist ASC`,[startDate, endDate]);
+        artistCount = artists.length;
+
+    }else if(req.body.dataGroups == 'All accounts (User and Musician)'){
+        users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ? ORDER BY dateTime_created_user ASC`,[startDate, endDate]);
+        artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ? ORDER BY dateTime_created_artist ASC`,[startDate, endDate]);
+        userCount = users.length;
+        artistCount = artists.length;
+
+    }else if(req.body.dataGroups == 'Song'){
+        songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ? ORDER BY release_date ASC`,[req.body.dateStart, req.body.dateEnd]);
+        songCount = songs.length;
+
+    }else if(req.body.dataGroups == 'Song and Musician'){
+        songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ? ORDER BY release_date ASC`,[req.body.dateStart, req.body.dateEnd]);
+        artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ? ORDER BY dateTime_created_artist ASC`,[startDate, endDate]);
+        artistCount = artists.length;
+        songCount = songs.length;
+
+    }else if(req.body.dataGroups == 'Song and User'){
+        songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ? ORDER BY release_date ASC`,[req.body.dateStart, req.body.dateEnd]);
+        users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ? ORDER BY dateTime_created_user ASC`,[startDate, endDate]);
+        userCount = users.length;
+        songCount = songs.length;
+
+    }else if(req.body.dataGroups == 'Song and all accounts (User and Musician)'){
+        users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ? ORDER BY dateTime_created_user ASC`,[startDate, endDate]);
+        artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ? ORDER BY dateTime_created_artist ASC`,[startDate, endDate]);
+        songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ? ORDER BY release_date ASC`,[req.body.dateStart, req.body.dateEnd]);
+        artistCount = artists.length;
+        userCount = users.length;
+        songCount = songs.length;
+
+    }
+
+    
+
+    res.render('viewCMActivity', {formData: req.body, userData: users, userCount: userCount, artistData: artists, artistCount: artistCount, songData: songs, songCount: songCount});
+});
+
+router.get('/viewReportsAdmin', (req, res)=>{
+    res.render('viewReportsAdmin');
 });
 
 router.get('/admin_index', (req, res)=>{

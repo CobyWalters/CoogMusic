@@ -224,3 +224,11 @@ div.musicianDrop{
     max-lines: 4;
 
 }
+
+.table {
+    max-width: none;
+    table-layout: fixed;
+    word-wrap: break-word;
+    font-size: small;
+
+}

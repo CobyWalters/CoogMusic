@@ -22,8 +22,8 @@ router.get('/logout', authController.logout);
 
 
 //admin
-router.get('/viewUsers',  DBController.viewUsers);
-router.get('/viewArtistsAdmin', DBController.viewArtistsAdmin);
+//router.get('/viewUsers',  DBController.viewUsers);
+//router.get('/viewArtistsAdmin', DBController.viewArtistsAdmin);
 
 //artists
 router.post('/upload', fileUploadcontroller.upload);

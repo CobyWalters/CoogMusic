@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-eOJMYsd53ii+scO/bJGFsiCZc+5NDVN2yr8+0RDqr0Ql0h+rP48ckxlpbzKgwra6" crossorigin="anonymous">
+    <link rel="stylesheet" href="/style.css">
+
+    <title>CoogMusic</title>
+</head>
+<body>
+
+<nav>
+        <h4> CoogMusic
+        </h4>
+            <ul>
+                
+                <!-- <action="/user_index" method="POST" name={{message}}>Home </li> -->
+                
+                <li> <a href="/admin_index">Home</a>  </li>
+                <li> <a href="/viewReportsAdmin">View Reports</a></li>
+                <li> <a href="/">Sign Out</a></li>
+
+            </ul>
+        
+    </nav>
+
+    <div class="container mt-4"> 
+        <h1>CoogMusic activity for {{formData.dataGroups}} from {{formData.dateStart}} to {{formData.dateEnd}}</h1>
+        <button onclick="window.print()" type="button" class="btn btn-danger">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
+                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                        </svg>
+                        Download CoogMusic activity Report
+        </button>
+        {{#if userData}}
+        
+        <h2> <br>Data group: User</h2>
+        <table class="table">
+            <caption style="font-size:medium;"> <b> Total number of users registered from {{formData.dateStart}} to {{formData.dateEnd}}: {{userCount}} </b></caption>
+            <thead>
+                <tr>
+                <th scope="col">User_id</th>
+                <th scope="col">Username</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Country</th>
+                <th scope="col">Age</th>
+                <th scope="col">Date Registered</th>
+                </tr>
+            </thead>
+                <tbody>
+                    {{#each userData}}
+                        <tr>
+                            <td>{{this.user_id}}</td>
+                            <td>@{{this.user_name}}</td>
+                            <td>{{this.user_name_display}}</td>
+                            <td>{{this.user_email}}</td>
+                            <td>{{this.country}}</td>
+                            <td>{{this.age}}</td>
+                            <td>{{this.dateTime_created_user}}</td>
+                        </tr>
+                    {{/each}}
+                
+                </tbody>
+            </table>
+        {{/if}}
+        {{#if artistData}}
+        <h2> <br>Data group: Artist</h2>
+        <table class="table">
+            <caption style="font-size:medium;"><b> Total number of musicians registered from {{formData.dateStart}} to {{formData.dateEnd}}: {{artistCount}} </b></caption>
+            <thead>
+                <tr>
+                <th scope="col">Artist_id</th>
+                <th scope="col">Username</th>
+                <th scope="col">Name</th>
+                <th scope="col">Email</th>
+                <th scope="col">Country</th>
+                <th scope="col">Age</th>
+                <th scope="col">Date Registered</th>
+                </tr>
+            </thead>
+                <tbody>
+                    {{#each artistData}}
+                        <tr>
+                            <td>{{this.artist_id}}</td>
+                            <td>@{{this.artist_name}}</td>
+                            <td>{{this.artist_name_display}}</td>
+                            <td>{{this.artist_email}}</td>
+                            <td>{{this.country}}</td>
+                            <td>{{this.age}}</td>
+                            <td>{{this.dateTime_created_artist}}</td>
+                        </tr>
+                    {{/each}}
+                
+                </tbody>
+            </table>
+        {{/if}}
+        {{#if songData}}
+        <h2> <br>Data group: Song</h2>
+            <table class="table">
+                <caption style="font-size:medium;"><b> Total number of songs uploaded from {{formData.dateStart}} to {{formData.dateEnd}}: {{songCount}} </b></caption>
+                <thead>
+                    <tr>
+                    <th scope="col">Song id</th>
+                    <th scope="col">Song name</th>
+                    <th scope="col">Artist</th>
+                    <th scope="col">Release date</th>
+                    <th scope="col">Plays</th>
+                    </tr>
+                </thead>
+                    <tbody>
+                        {{#each songData}}
+                            <tr>
+                                <td>{{this.song_id}}</td>
+                                <td>{{this.song_name}}</td>
+                                <td>{{this.artist_name}}</td>
+                                <td>{{this.release_date}}</td>
+                                <td>{{this.plays}}</td>
+                            </tr>
+                        {{/each}}
+                    
+                    </tbody>
+    
+                    
+            </table>
+            
+        {{/if}}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>    
+    
+</body>
+</html>

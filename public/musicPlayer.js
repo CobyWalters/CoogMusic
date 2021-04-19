@@ -1,3 +1,5 @@
+import { hello } from '../public/module.js';
+console.log(hello);
 let previous = document.querySelector('#pre');
 let play = document.querySelector('#play');
 let next = document.querySelector('#next');

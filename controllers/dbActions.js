@@ -63,4 +63,12 @@ exports.viewArtists = (req, res)=>{
     return res.redirect('/viewArtists');
 }
 
+//----------> SONGS
+function getSongs(){
+    let songs = db.query(`SELECT * FROM Song`);
+    return songs;
+
+}
+
+module.exports.getSongs = getSongs;
 /////////---------------------------------------------------------/////
