@@ -74,7 +74,7 @@ class DbService {
     async getSongDisplays() {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = "SELECT song_id, song_name, artist_name_display, song_audio_path, song_img_path, plays FROM Song;";
+                const query = "SELECT song_id, song_name, artist_name_display, song_audio_path, song_img_path, plays, artist_idB FROM Song WHERE isDeleted=0;";
                 connection.query(query, (err, results) => {
                     if (err) reject(new Error(err.message));
                     resolve(results);
@@ -95,7 +95,7 @@ class DbService {
             try {
                 const response = await new Promise((resolve, reject) => {
                     var date = new Date();
-                    var formatDate = moment(date).format('YYYY-MM-DD HH:MM:SS');
+                    var formatDate = moment(date).format('YYYY-MM-DD HH:mm:ss');
                     //console.log("dont unformat for: " + formatDate);
                     //const query = `INSERT INTO PlayTracker (played_by_artist_id, dateTime_Play, song_by_artist_id) VALUES (\"${artistId}\", ${formatDate}, \"${songId}\")`;
                     
@@ -117,11 +117,10 @@ class DbService {
             try {
                 const response = await new Promise((resolve, reject) => {
                     var date = new Date();
-                    var formatDate = moment(date).format('YYYY-MM-DD HH:MM:SS');
+                    var formatDate = moment(date).format('YYYY-MM-DD HH:mm:ss');
                     //console.log("ff: " + formatDate);
                     //const query = `INSERT INTO PlayTracker (played_by_artist_id, dateTime_Play, song_by_artist_id) VALUES (\"${artistId}\", ${formatDate}, \"${songId}\")`;
-                    
-                    
+                    console.log("IN H");
                     connection.query(`INSERT INTO countPlays SET ?`,{played_by_artist_id: artistId, song_id_played: songId, dateTime_Play: formatDate}, (err, results) => {
                         if (err) reject(new Error(err.message));
                         resolve(results);

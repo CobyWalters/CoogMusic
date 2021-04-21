@@ -92,7 +92,9 @@ function loadExplorePane(data) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ songId: event.currentTarget.song_data["song_id"] }),
             });
+            console.log("ennnn");
             playSong(event.currentTarget.song_data);
+            console.log("done fetch"); 
         });
         var image = document.createElement("img");
         if (data[i]["song_img_path"] == "") {
@@ -155,6 +157,7 @@ let track = document.createElement('audio');
 track.volume = .5;
 
 function playSong(song_data) {
+    
     console.log(song_data);
     clearInterval(timer);
     resetSlider();
