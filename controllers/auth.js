@@ -6,6 +6,7 @@ const e = require('express');
 const { async } = require('q');
 const { promisify } = require ('util');
 var moment = require('moment');
+const fs = require('fs');
 //const flash = require('connect-flash');
 
 /* Middleware functions included:
@@ -252,8 +253,7 @@ exports.register =  (req, res)=>{
     //If the form is empty, variable will be empty. Example: You're  a user, tthen the fb_url, etc. will be empty
     const { name, username, email, DOB, country, password, password2, biography, fb_url, ig_url, spotify_url, soundcloud_url, personal_url} = req.body;
     let isMusician = req.body.checkbox ? true : false //If the musician checkbox is checked, then we havve a musician
-    var file_img;
-    file_img = req.files.profilePic;
+
    //To register, you need 1) A unique username 2) Matching passwords
 
    //Username exists in User table, so bring them back to the page and tell them to
@@ -327,18 +327,15 @@ exports.register =  (req, res)=>{
 
     }else{
         //Create the musician account and insert it into the database
-        db2.query(`INSERT INTO Artist SET ?`, {artist_id: uniqueId, artist_name: username, artist_email: email, country: country, background_link: '', website_url: personal_url, artist_password: password, artist_name_display: name, biography: biography, fb_url: fb_url, ig_url: ig_url, spotify_url: spotify_url, soundcloud_url: soundcloud_url, age: currAge, dateTime_created_artist: formatDate});
-        
+        var file_img = req.files.profilePic;
         //profile pic upload
-        file_Img.mv('public/user_profileImgs/'+file_img.name, function(err){
-            if(err)
-                return res.status(500).send(err);
-            db2.query(`INSERT INTO Artist ? WHERE artist_id ?`,[{artist_profile_pic: file_name}, {artist_id: uniqueId}]);
+        file_img.mv('public/artist_profilePics/'+file_img.name, function(err){
+            db2.query(`INSERT INTO Artist SET ?`, {artist_id: uniqueId, artist_name: username, artist_email: email, country: country, background_link: '', website_url: personal_url, artist_password: password, artist_name_display: name, biography: biography, fb_url: fb_url, ig_url: ig_url, spotify_url: spotify_url, soundcloud_url: soundcloud_url, age: currAge, artist_profile_pic: file_img.name, dateTime_created_artist: formatDate});
         });
 
         //Cookie stuuff, same as before
         const token = jwt.sign({id: uniqueId, type: 'Artist'}, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXPIRES_IN} );
-
+        
         const cookieOptions = {
             expires: new Date(
                 Date.now() + process.env.COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
@@ -349,6 +346,7 @@ exports.register =  (req, res)=>{
         res.cookie('account', token, cookieOptions);
         
         return res.redirect('/successRegister_Artist');
+
     }   
         
 }
