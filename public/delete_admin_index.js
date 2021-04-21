@@ -54,6 +54,8 @@ function loadExplorePane(data) {
             var clickedSong = event.currentTarget.song_data;      
             
             deleteBox.innerHTML = 
+            "<br>" +
+            "<h2><center><h2>[[[Deleting: " + clickedSong["song_name"] + " by " + clickedSong["artist_name_display"] + "]]]</h2></center></h2>" +
             "<form action=\"/deleteSongs\" method=\"POST\" role=\"form\">" + 
             "<div class=\"lead margin-10-percent\" class=\"form-group\" style=\"padding-top: 2px;\">" +
             "<label for=\"country\">Reason for deletion</label>" +
@@ -66,9 +68,13 @@ function loadExplorePane(data) {
             "<label for=\"exampleFormControlTextarea1\" class=\"form-label\">Description for deletion</label>" + 
             "<small id=\"textboxhelp\" class=\"form-text text-muted\">(300 char limit)</small>" + 
             "<textarea class=\"form-control\" name=\"description\" id=\"description\" rows=\"3\"></textarea>" + 
+            "<br>" +
             "<button type=\"submit\" class=\"btn btn-primary\">Delete song</button>" + 
             "<input style=\"display:none;\" type=\"text\" name=\"songId\" value=" + clickedSong["song_id"] + ">" +
             "<input style=\"display:none;\" type=\"text\" name=\"artistId\" value=" + clickedSong["artist_idB"] + ">" +
+            "</form>" + " " +
+            "<form action=\"/deleteSongs\" method=\"GET\" id=\"del2button\">" + 
+            "<button type=\"submit\" class=\"btn btn-primary\" style = \"padding-left: 10px\";>Cancel</button>" +
             "</form>";     
         });
 
