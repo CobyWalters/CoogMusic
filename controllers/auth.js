@@ -303,7 +303,7 @@ exports.register =  (req, res)=>{
     const getAge = birthDate => Math.floor((new Date() - new Date(birthDate).getTime()) / 3.15576e+10)
     const currAge = getAge(DOB);
     var date = new Date();
-    var formatDate = moment(date).format('YYYY-MM-DD HH:MM:SS');
+    var formatDate = moment(date).format('YYYY-MM-DD HH:mm:ss');
 
     const artist_id = 0; //SET TO 0 RN CHANGE LATER
 

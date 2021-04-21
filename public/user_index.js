@@ -87,6 +87,7 @@ function loadExplorePane(data) {
         song_item.setAttribute("id", "song-item");
         song_item.song_data = data[i];
         song_item.addEventListener('click', function (event) {
+            
             fetch('http://localhost:5000/updateCount', {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
@@ -155,6 +156,7 @@ let track = document.createElement('audio');
 track.volume = .5;
 
 function playSong(song_data) {
+    
     console.log(song_data);
     clearInterval(timer);
     resetSlider();
