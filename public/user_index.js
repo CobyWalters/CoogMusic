@@ -91,16 +91,8 @@ function loadExplorePane(data) {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ songId: event.currentTarget.song_data["song_id"] }),
-            })
-                .then(response => response.json())
-                .then(data => loadExplorePane(data['data']));
+            });
             playSong(event.currentTarget.song_data);
-            //+1 NUMBER OF PLAYS
-            console.log("Eee");
-            //console.log("SD: " + event.currentTarget.song_data["plays"]);            
-
-
-
         });
         var image = document.createElement("img");
         if (data[i]["song_img_path"] == "") {
@@ -132,6 +124,16 @@ function loadExplorePane(data) {
 
 function filterSongs(input) {
     const search_text = input.currentTarget.value;
+    var songs = document.getElementsByClassName("song-item");
+    for (var i = 0; i < songs.length; i++) {
+        const artist_name_display = songs[i].song_data["artist_name_display"];
+        const song_name = songs[i].song_data["song_name"]
+        if (artist_name_display.includes(search_text) || song_name.includes(search_text)) {
+            songs[i].style.visibility = "visible";
+        } else {
+            songs[i].style.visibility = "hidden";
+        }
+    }
 }
 
 // MUSIC PLAYER
@@ -159,19 +161,12 @@ function playSong(song_data) {
     track.src = "/song_audio/" + song_data["song_audio_path"];
     title.innerHTML = song_data["song_name"];
     //track_image.src = "/song_images/" + song_data["song_img_path"];
-    artist.innerHTML = song_data["artist_name"];
+    artist.innerHTML = song_data["artist_name_display"];
     track.load();
     track.play();
     play.innerHTML = '<i class="fa fa-pause" aria-hidden="true"></i>';
     playing_song = true;
     timer = setInterval(rangeSlider, 1000);
-
-
-
-    console.log("JJJ");
-
-    //song_data["plays"] = song_data["plays"]+1;
-    //console.log(song_data["plays"]);
 }
 
 function muteSound() {
