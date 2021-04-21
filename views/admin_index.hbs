@@ -26,16 +26,44 @@
         
     </nav>
 
-    <div class="container mt-4"> 
-        <div class="jumbotron">
-        <h1 class="display-4">Welcome to your dashboard (ADMINISTRATOR VIEW)</h1>
-        <p class="lead">Notice: You have access to view all reports</p>
-        <hr class="my-4">
+            <div class="home-page-container" id="bottom"> 
+            <div class="navigation-container" style="order: 1"></div>
+            <div id="explore-pane" class="central-container" style="order: 2">
+                <h1 class="display-4"><b>Welcome back to your dashboard (admin priviledges)</b></h1>
+                <p class="lead">Keep up to date with all your followed musicians</p>
+                <hr class="my-4">
+                <div id="song-container"></div>
+                <div class="song-container-bottom-margin"></div>
+            </div>
+            <div id="notification-pane" class="notifications-container" style="order: 3">
+                <h2 class="mini-header"><b>Notifications</b></h2>
+                <hr class="my-2 margin-10-percent">
+            </div>
         </div>
-    </div>
+        
+        <div class="song-bar-container">
+            <div class="song-bar-text-container">
+                <h6 id="title"></h6>
+                <h6 id="artist"></h6>
+            </div>
+            <div class="duration-bar-container">
+                <button class="play-button" onclick="togglePlay()" id="play">
+                    <i class="fa fa-play" aria-hidden="true"></i>
+                </button>
+                <div class="duration-bar">
+                    <input type="range" min="0" max="100" value="0" id="duration_slider" onchange="changeDuration()">
+                </div>
+            </div>
+            <div class="volume-bar-container">
+                <i class="fa fa-volume-up" aria-hidden="true" onclick="muteSound()" id="volume_icon"></i>
+                <input type="range" min="0" max="100" value="50" onchange="volumeChange()" id="volume">
+            </div>
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
+        <script src="/user_index.js"></script>
 
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>    
-    
+
 </body>
 </html>

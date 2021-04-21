@@ -97,7 +97,8 @@ exports.login  = (req, res) =>{
         if(results.length <= 0){
 
             //results is empty so results2 has  user = we are  looking at ARTISTS
-            if(results2[0].password != password){
+            if(results2[0].artist_password != password){
+                console.log("RESULTS: "+ results2[0])
                 return res.render('login', {
                     message: 'Try again: Incorrect password'
                 });
@@ -124,7 +125,7 @@ exports.login  = (req, res) =>{
         }else{
             //Otherwise, account exists in the User table
             //Same thing as above, except now we specify type of User instead of Artist
-            if(results[0].password != password){
+            if(results[0].user_password != password){
                 return res.render('login', {
                     message: 'Try again: Incorrect password'
                 });
