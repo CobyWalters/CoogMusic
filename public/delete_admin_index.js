@@ -29,6 +29,7 @@ function timeSince(date) {
 }
 
 
+
 function loadExplorePane(data) {
     var song_container = document.getElementById('song-container');
     var deleteBox = document.getElementById('deleteNotif');
@@ -101,6 +102,16 @@ function loadExplorePane(data) {
 
 function filterSongs(input) {
     const search_text = input.currentTarget.value;
+    var songs = document.getElementsByClassName("song-item");
+    for (var i = 0; i < songs.length; i++) {
+        const artist_name_display = songs[i].song_data["artist_name_display"];
+        const song_name = songs[i].song_data["song_name"]
+        if (artist_name_display.includes(search_text) || song_name.includes(search_text)) {
+            songs[i].style.visibility = "visible";
+        } else {
+            songs[i].style.visibility = "hidden";
+        }
+    }
 }
 
 // MUSIC PLAYER
