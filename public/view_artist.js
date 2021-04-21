@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const artist_id = document.getElementById('artist-id').value;
     console.log(artist_id);
-    fetch(`http://localhost:5000/getArtistSongs/:\"${artist_id}\"`)
+    fetch(`https://coogmusic.xyz/getArtistSongs/:\"${artist_id}\"`)
     .then(response => response.json())
     .then(data => loadArtistSongs(data['data']));
 });
@@ -14,7 +14,7 @@ function loadArtistSongs(data) {
         song_item.setAttribute("id", "song-item");
         song_item.song_data = data[i];
         song_item.addEventListener('click', function (event) {
-            fetch('http://localhost:5000/updateCount', {
+            fetch('https://coogmusic.xyz/updateCount', {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({songId: event.currentTarget.song_data["song_id"]}),
