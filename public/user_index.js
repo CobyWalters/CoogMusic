@@ -1,10 +1,10 @@
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('https://coogmusic.xyz/getSongDisplays')
-    .then(response => response.json())
-    .then(data => loadExplorePane(data['data']));
-    fetch('https://coogmusic.xyz/getNotifications')
-    .then(response => response.json())
-    .then(data => loadNotificationPane(data['data']));
+    fetch('http://localhost:5000/getSongDisplays')
+        .then(response => response.json())
+        .then(data => loadExplorePane(data['data']));
+    fetch('http://localhost:5000/getNotifications')
+        .then(response => response.json())
+        .then(data => loadNotificationPane(data['data']));
 });
 
 function timeSince(date) {
@@ -12,7 +12,7 @@ function timeSince(date) {
     const _MS_PER_DAY = 1000 * 60 * 60 * 24;
     const then = date.split(/[-T :]/);
     const now = new Date();
-    const utc1 = Date.UTC(then[0], then[1]-1, then[2]);
+    const utc1 = Date.UTC(then[0], then[1] - 1, then[2]);
     const utc2 = Date.UTC(now.getFullYear(), now.getMonth(), now.getDate());
     const day_diff = Math.floor((utc2 - utc1) / _MS_PER_DAY);
 
@@ -85,20 +85,20 @@ function loadExplorePane(data) {
         song_item.setAttribute("id", "song-item");
         song_item.song_data = data[i];
         song_item.addEventListener('click', function (event) {
-            fetch('https://coogmusic.xyz/updateCount', {
+            fetch('http://localhost:5000/updateCount', {
                 method: "POST",
-                headers: {'Content-Type': 'application/json'},
-                body: JSON.stringify({songId: event.currentTarget.song_data["song_id"]}),
-             })
-            .then(response => response.json())
-            .then(data => loadExplorePane(data['data']));
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ songId: event.currentTarget.song_data["song_id"] }),
+            })
+                .then(response => response.json())
+                .then(data => loadExplorePane(data['data']));
             playSong(event.currentTarget.song_data);
             //+1 NUMBER OF PLAYS
             console.log("Eee");
             //console.log("SD: " + event.currentTarget.song_data["plays"]);            
 
-           
- 
+
+
         });
         var image = document.createElement("img");
         if (data[i]["song_img_path"] == "") {
@@ -117,7 +117,7 @@ function loadExplorePane(data) {
 
         artist_name.innerHTML = data[i]["artist_name"];
         var plays = document.createElement("h5");
-        plays.innerHTML = 'Number of plays: '+ data[i]["plays"];
+        plays.innerHTML = 'Number of plays: ' + data[i]["plays"];
         song_item_text.append(song_name);
         song_item_text.append(artist_name);
         song_item_text.append(plays);
@@ -133,7 +133,7 @@ function loadExplorePane(data) {
 let previous = document.querySelector('#pre');
 let play = document.querySelector('#play');
 let title = document.querySelector('#title');
-let recent_volume= document.querySelector('#volume');
+let recent_volume = document.querySelector('#volume');
 let slider = document.querySelector('#duration_slider');
 let show_duration = document.querySelector('#show_duration');
 let track_image = document.querySelector('#track_image');
@@ -148,20 +148,20 @@ track.volume = .5;
 
 function playSong(song_data) {
     console.log(song_data);
-	clearInterval(timer);
-	resetSlider();
-	track.src = "/song_audio/" + song_data["song_audio_path"];
-	title.innerHTML = song_data["song_name"];	
-	//track_image.src = "/song_images/" + song_data["song_img_path"];
-    artist.innerHTML = song_data["artist_name"];	
+    clearInterval(timer);
+    resetSlider();
+    track.src = "/song_audio/" + song_data["song_audio_path"];
+    title.innerHTML = song_data["song_name"];
+    //track_image.src = "/song_images/" + song_data["song_img_path"];
+    artist.innerHTML = song_data["artist_name"];
     track.load();
     track.play();
     play.innerHTML = '<i class="fa fa-pause" aria-hidden="true"></i>';
     playing_song = true;
-	timer = setInterval(rangeSlider, 1000);
+    timer = setInterval(rangeSlider, 1000);
 
 
-   
+
     console.log("JJJ");
 
     //song_data["plays"] = song_data["plays"]+1;
@@ -169,12 +169,12 @@ function playSong(song_data) {
 }
 
 function muteSound() {
-	track.volume = 0;
-	//volume.value = 0;
+    track.volume = 0;
+    //volume.value = 0;
 }
 
 function togglePlay() {
-    if(playing_song) {
+    if (playing_song) {
         track.pause();
         play.innerHTML = '<i class="fa fa-play" aria-hidden="true"></i>';
     } else {
@@ -183,7 +183,7 @@ function togglePlay() {
     }
     playing_song = !playing_song;
 }
- 
+
 // reset song slider
 function resetSlider() {
     slider.value = 0;
@@ -191,24 +191,24 @@ function resetSlider() {
 
 // change volume
 function volumeChange() {
-   track.volume = recent_volume.value / 100;
+    track.volume = recent_volume.value / 100;
 }
 
 // change slider position 
 function changeDuration() {
-   slider_position = track.duration * (slider.value / 100);
-   track.currentTime = slider_position;
+    slider_position = track.duration * (slider.value / 100);
+    track.currentTime = slider_position;
 }
 
 function rangeSlider() {
     let position = 0;
     // update slider position
-    if(!isNaN(track.duration)){
+    if (!isNaN(track.duration)) {
         position = track.currentTime * (100 / track.duration);
-        slider.value =  position;
+        slider.value = position;
     }
     // function will run when the song is over
-    if(track.ended){
+    if (track.ended) {
         play.innerHTML = '<i class="fa fa-play" aria-hidden="true"></i>';
     }
 }
