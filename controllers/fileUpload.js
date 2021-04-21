@@ -149,17 +149,26 @@ exports.upload = function(req, res){
 
 exports.delete = (req, res) =>{
     var post = req.body;
-    var song_name = post.songName;
-    var artist_Name= post.artistName;
+    var songName = post.songName;
+    var artistName= post.artistName;
+    console.log(artistName);
+    var song_id = db.query(`SELECT song_id FROM Song WHERE song_name = ? AND artist_name_display = ?`, [songName, artistName]);
+    console.log(song_id);
 
-    db2.query(`DELETE FROM Song WHERE song_name = ?`, [song_name], (err, result, field) =>{
+    db2.query(`DELETE FROM Song WHERE song_name = ?`, [songName], (err, result, field) =>{
         if(err){
-            return res.render('register', {
-                message: 'Try again: That username is already in use by another user'
+            return res.render('uploadMusic', {
+                message2: 'Song Name was left empty or Song has not been uploaded yet'
             });
         }
         else{
-            console.log(artist_Name);
+            // fs.unlink(invertSlashes(path)+"/public/song_images/" + songId + ".jpg", function(err){
+            //     if (err) {
+            //         throw err
+            //     } else {
+            //         console.log("Successfully deleted the file.");
+            //     }
+            // })
             return res.render('uploadMusic', {
                 message2: 'Song was Deleted'
             })

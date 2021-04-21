@@ -423,7 +423,7 @@ router.get('/filter',authController.getAccount, (req, res) =>{
     }else{
         res.redirect('/login');
     }
-}
+});
 
 router.get('/viewReportsAdmin', (req, res)=>{
     res.render('viewReportsAdmin');
