@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('http://localhost:5000/getSongDisplays')
+    fetch('https://coogmusic.xyz/getSongDisplays')
         .then(response => response.json())
         .then(data => loadExplorePane(data['data']));
-    fetch('http://localhost:5000/getNotifications')
+    fetch('https://coogmusic.xyz/getNotifications')
         .then(response => response.json())
         .then(data => loadNotificationPane(data['data']));
 });
@@ -87,7 +87,7 @@ function loadExplorePane(data) {
         song_item.setAttribute("id", "song-item");
         song_item.song_data = data[i];
         song_item.addEventListener('click', function (event) {
-            fetch('http://localhost:5000/updateCount', {
+            fetch('https://coogmusic.xyz/updateCount', {
                 method: "POST",
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ songId: event.currentTarget.song_data["song_id"] }),
