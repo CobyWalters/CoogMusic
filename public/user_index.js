@@ -93,7 +93,9 @@ function loadExplorePane(data) {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ songId: event.currentTarget.song_data["song_id"] }),
             });
+            console.log("ennnn");
             playSong(event.currentTarget.song_data);
+            console.log("done fetch"); 
         });
         var image = document.createElement("img");
         if (data[i]["song_img_path"] == "") {

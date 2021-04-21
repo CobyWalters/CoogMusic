@@ -37,7 +37,10 @@
 
             <div id="explore-pane" class="central-container" style="order: 2">
                 <p class="lead margin-10-percent"> <br>Click the song you want to delete and fill out the appropriate forms. A delete log can be found in the reports and the musician will be notified of deletion.</p>
-                
+                    {{#if msg}}
+                        <h4 class="alert alert-success mt-4">{{msg}}</h4>
+                    {{/if}}
+
                 
                 
                 <div class="container mt-4"> 
