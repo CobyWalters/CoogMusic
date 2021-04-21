@@ -112,6 +112,7 @@ h6 {
     display: flex;
     flex-direction: column;
     flex: 15%;
+    padding-top: 25px;
 }
 
 .notification {
@@ -165,8 +166,25 @@ h6 {
 
 .navigation-container {
     background-color: #fafafa;
-    flex: 15%
+    display: flex;
+    flex-direction: column;
+    flex: 15%;
+    padding-top: 25px;
 }
+
+.search-bar {
+    background-color: #fafafa;
+    color:gray;
+    margin-left: 10%;
+    margin-right: 10%;
+    border: none;
+    cursor: text;
+}
+
+input:focus {
+    outline: none;
+}
+
 
 .margin-10-percent {
     margin-left: 10%;

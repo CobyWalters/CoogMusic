@@ -23,11 +23,14 @@
         </nav>
 
         <div class="home-page-container" id="bottom"> 
-            <div class="navigation-container" style="order: 1"></div>
+            <div class="navigation-container" style="order: 1">
+                <input class="search-bar" id="search-bar" type="text" placeholder="Search..">
+                <hr class="my-1 margin-10-percent">
+            </div>
             <div id="explore-pane" class="central-container" style="order: 2">
-                <h1 class="display-4"><b>Welcome back, {{acc.user_name_display}} (@{{acc.user_name}})</b></h1>
-                <p class="lead">Keep up to date with all your followed musicians</p>
-                <hr class="my-4">
+                <h1 class="display-4 margin-10-percent"><b>Welcome back, {{acc.user_name_display}} (@{{acc.user_name}})</b></h1>
+                <p class="lead margin-10-percent">Keep up to date with all your followed musicians</p>
+                <hr class="my-4 margin-10-percent">
                 <div id="song-container"></div>
                 <div class="song-container-bottom-margin"></div>
             </div>

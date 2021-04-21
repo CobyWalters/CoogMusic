@@ -73,9 +73,9 @@ router.get('/getSongDisplays', (request, response)=>{
     .catch(err => console.log(err));
 });
 
-router.get('/getArtistSongs/:artist_name', (request, response)=>{
+router.get('/getArtistSongs/:artist_id', authController.getAccount, (request, response)=>{
     const db = dbService.getDbServiceInstance();
-    const result = db.getArtistSongs(request.params.artist_name);
+    const result = db.getArtistSongs(request.params.artist_id);
     result
     .then(data => response.json({data : data}))
     .catch(err => console.log(err));
