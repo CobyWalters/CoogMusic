@@ -20,9 +20,10 @@
                 <!-- <action="/user_index" method="POST" name={{message}}>Home </li> -->
                 
                 <li> <a href="/admin_index">Home</a>  </li>
-                <li> <a href="/viewReportsAdmin">View Reports</a></li>
+                <li> <a href="/viewArtists">View Artists</a>  </li>
+                <li> <a href="/viewReportsAdmin">Reports</a></li>
                 <li> <a href="/">Sign Out</a></li>
-
+                
             </ul>
         
     </nav>
@@ -55,7 +56,7 @@
                 </tr>
             </thead>
                 <tbody>
-                    {{#each artist}}
+                    {{#each artistData}}
                         <tr>
                             <td>{{this.artist_id}}</td>
                             <td>@{{this.artist_name}}</td>

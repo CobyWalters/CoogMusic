@@ -69,8 +69,19 @@ exports.login  = (req, res) =>{
 
     //If admin login,log in to the admin page
     if(username == 'admin' && password == 'admin'){
-        //redirect to admin page
-        return res.redirect('/admin_index');
+        const token = jwt.sign({id: 0, type: 'Admin'}, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXPIRES_IN} );
+
+        const cookieOptions = {
+            expires: new Date(
+                Date.now() + process.env.COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000 //basically saying cookie will expire for like 90 days. 
+                //remember that cookie gets deleted when user logs out
+            ),
+            httpOnly: true
+        }
+        
+        //The cookie is named 'account'. thus, account will have: account={id: ###, type: Artist}
+        res.cookie('account', token, cookieOptions);
+        return res.redirect('/admin_index'); //Redirect to the artist homepage
     }
 
     //Check if username exists in the Artist or User table
@@ -85,7 +96,7 @@ exports.login  = (req, res) =>{
     if(results.length <= 0 && results2.length <=0){
         console.log('DNE');
         return res.render('login', {
-            message: 'Try again: Username or password do not match'
+            message: 'Try again: Username does not exist'
         });
 
     }else{
@@ -98,9 +109,17 @@ exports.login  = (req, res) =>{
         if(results.length <= 0){
 
             //results is empty so results2 has  user = we are  looking at ARTISTS
+            if(results2[0].artist_password != password){
+                console.log("RESULTS: "+ results2[0])
+                return res.render('login', {
+                    message: 'Try again: Incorrect password'
+                });
+            }
 
             //Create our cookie. Cookie will store the unique artist id and that it is of type Artist
             //Will store like: {id: ###, type: Artist}
+            
+
             const token = jwt.sign({id: results2[0].artist_id, type: 'Artist'}, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXPIRES_IN} );
 
                 const cookieOptions = {
@@ -118,6 +137,12 @@ exports.login  = (req, res) =>{
         }else{
             //Otherwise, account exists in the User table
             //Same thing as above, except now we specify type of User instead of Artist
+            if(results[0].user_password != password){
+                return res.render('login', {
+                    message: 'Try again: Incorrect password'
+                });
+            }
+
             const token = jwt.sign({id: results[0].user_id, type: 'User'}, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXPIRES_IN} );
 
             const cookieOptions = {
@@ -201,6 +226,9 @@ exports.getAccount = async (req, res, next) =>{
 
                 req.acc = results[0];
                 return next();
+            }else if(decoded.type == 'Admin'){
+                req.acc = 'admin';
+                return next();
             }
 
 
@@ -225,6 +253,7 @@ exports.register =  (req, res)=>{
     //If the form is empty, variable will be empty. Example: You're  a user, tthen the fb_url, etc. will be empty
     const { name, username, email, DOB, country, password, password2, biography, fb_url, ig_url, spotify_url, soundcloud_url, personal_url} = req.body;
     let isMusician = req.body.checkbox ? true : false //If the musician checkbox is checked, then we havve a musician
+
    //To register, you need 1) A unique username 2) Matching passwords
 
    //Username exists in User table, so bring them back to the page and tell them to
@@ -246,6 +275,21 @@ exports.register =  (req, res)=>{
         });
     }
 
+    //check if email exists
+    results = db.query(`SELECT user_email FROM User WHERE user_email = ?`, [email]);
+    if(results.length > 0){
+        return res.render('register', {
+            message: 'Try again: That email is already in use'
+        });
+    } 
+
+    results = db.query(`SELECT artist_email FROM Artist WHERE artist_email = ?`, [email]);
+    if(results.length > 0){
+        return res.render('register', {
+            message: 'Try again: That email is already in use'
+        });
+    } 
+
     //Passwords need to match
     if(password != password2){
         return res.render('register', {
@@ -259,7 +303,7 @@ exports.register =  (req, res)=>{
     const getAge = birthDate => Math.floor((new Date() - new Date(birthDate).getTime()) / 3.15576e+10)
     const currAge = getAge(DOB);
     var date = new Date();
-    var formatDate = moment(date).format('YYYY-MM-DD HH:MM:SS');
+    var formatDate = moment(date).format('YYYY-MM-DD HH:mm:ss');
 
     const artist_id = 0; //SET TO 0 RN CHANGE LATER
 

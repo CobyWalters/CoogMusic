@@ -38,6 +38,19 @@
                 <li> <a href="/auth/logout">Sign Out</a> </li>
             </ul>
             {{/if}} 
+
+            {{#ifeq acc 'admin'}}
+            <ul>
+                
+                <!-- <action="/user_index" method="POST" name={{message}}>Home </li> -->
+                
+                <li> <a href="/admin_index">Home</a>  </li>
+                <li> <a href="/viewArtists">View Artists</a>  </li>
+                <li> <a href="/viewReportsAdmin">Reports</a></li>
+                <li> <a href="/">Sign Out</a></li>
+                
+            </ul>
+          {{/ifeq}}    
         
     </nav>
 
@@ -46,7 +59,7 @@
       <div class="col-4">
         <div class="card">
           <div class="avatar-ctn">
-            <img src="/avatar.png" class="avatar" alt="user profile picture"/>
+           
           </div>
           <div class="card-body">
             <h2 class="card-title" id="artist-name">{{artistData.artist_name_display}}</h2>
@@ -112,6 +125,7 @@
       </div>
     
       <div class="song-bar-container">
+            <input style="display:none;" type="text" id="artist-id" value="{{artistData.artist_id}}">
             <div class="song-bar-text-container">
                 <h6 id="title"></h6>
                 <h6 id="artist"></h6>

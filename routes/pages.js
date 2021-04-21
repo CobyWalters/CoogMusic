@@ -73,9 +73,9 @@ router.get('/getSongDisplays', (request, response)=>{
     .catch(err => console.log(err));
 });
 
-router.get('/getArtistSongs/:artist_name', (request, response)=>{
+router.get('/getArtistSongs/:artist_id', authController.getAccount, (request, response)=>{
     const db = dbService.getDbServiceInstance();
-    const result = db.getArtistSongs(request.params.artist_name);
+    const result = db.getArtistSongs(request.params.artist_id);
     result
     .then(data => response.json({data : data}))
     .catch(err => console.log(err));
@@ -149,15 +149,65 @@ router.get('/viewReportsArtist', authController.getAccount, (req, res)=>{
     }
 });
 
+router.post('/followerInsights', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        //console.log(req.body);
+        usersTable = db.query(`SELECT * FROM Follow F INNER JOIN User U ON FIND_IN_SET(F.followed_by_user_id, U.user_id) WHERE F.following_artist_id = ?`,[req.acc.artist_id]);
+        //console.log(usersTable);
+        res.render('followerInsights', {acc: req.acc, userData: usersTable});
+    }else{
+        res.redirect('/login');
+    }
+});
+
+
 router.post('/songInsights', authController.getAccount, (req, res)=>{
     if(req.acc){
         var songData;
+        var playData;
+        var genreAvg;
+        var genre;
         if(req.body.dataGroups == 'All of my songs'){
             songData = db.query(`SELECT * FROM Song WHERE artist_idB = ?`,[req.acc.artist_id]);
         }else{
             songData = db.query(`SELECT * FROM Song WHERE song_name = ? AND artist_idB = ?`,[req.body.dataGroups, req.acc.artist_id]);
+            playData = db.query(`SELECT * FROM countPlays WHERE song_id_played = ?`,[songData[0].song_id]);
+            genreAvg = db.query(`SELECT AVG(plays) AS avg FROM Song WHERE genre_idB = ?`, [songData[0].genre_idB]);
+
+            //userId = db.query(`SELECT played_by_user_id FROM countPlays WHERE song_id_played = ?`,[songData[0].song_id]);
+            //console.log(userId);
+            usersTable = db.query(`SELECT * FROM countPlays C INNER JOIN User U ON FIND_IN_SET(C.played_by_user_id, U.user_id) WHERE C.song_id_played = ?`,[songData[0].song_id]);
+            artistsTable = db.query(`SELECT * FROM countPlays C INNER JOIN Artist A ON FIND_IN_SET(C.played_by_artist_id, A.artist_id) WHERE C.song_id_played = ?`,[songData[0].song_id]);
+            
+            //console.log(usersTable);
+            //console.log(artistsTable);
+            if(songData[0].genre_idB == 0){
+                genre = 'Hip-Hop';
+            }else if(songData[0].genre_idB == 1){
+                genre = 'Pop';
+            }else if(songData[0].genre_idB == 10){
+                genre = 'Rock';
+            }else if(songData[0].genre_idB == 2){
+                genre = 'Pop';
+            }else if(songData[0].genre_idB == 3){
+                genre = 'Country';
+            }else if(songData[0].genre_idB == 4){
+                genre = 'EDM';
+            }else if(songData[0].genre_idB == 5){
+                genre = 'Classical';
+            }else if(songData[0].genre_idB == 6){
+                genre = 'Techno';
+            }else if(songData[0].genre_idB == 7){
+                genre = 'Alternative';
+            }else if(songData[0].genre_idB == 8){
+                genre = 'R&B';
+            }else if(songData[0].genre_idB == 9){
+                genre = 'Latin';
+            }
+            //console.log(playData);
+            //console.log(songData[0].plays);
         }
-        res.render('songInsights', {acc: req.acc, formData: req.body, songData: songData});
+        res.render('songInsights', {acc: req.acc, formData: req.body, songData: songData[0], playData: playData, genreAvg: genreAvg[0].avg, genre: genre, userData: usersTable, artistData: artistsTable});
     }else{
         res.redirect('/login');
     }
@@ -219,6 +269,7 @@ router.get('/user_index', authController.getAccount, (req, res)=>{
 router.get('/viewArtists', authController.getAccount, (req, res)=>{
     if(req.acc){
         let artists = db.query(`SELECT * FROM Artist`);
+        
         res.render('viewArtists', {acc: req.acc, artistData: artists});
     }else{
         res.redirect('/login');
@@ -281,87 +332,170 @@ router.post('/artistProfile/:artistId', authController.getAccount, (req, res)=>{
 ////////////////////////////////////////////////
 
 //////////////// ADMIN PAGE ////////////////////////////////
-router.get('/viewUsers', (req, res)=>{
-    let users = db.query(`SELECT * FROM User`);
-    //console.log(users.length); 
-    res.render('viewUsers',{userData: users, count: users.length});
+
+/*
+router.get('/viewArtists', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        let artists = db.query(`SELECT * FROM Artist`);
+        
+        res.render('viewArtists', {acc: req.acc, artistData: artists});
+    }else{
+        res.redirect('/login');
+    }
+});
+*/
+
+router.get('/viewUsers', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        let users = db.query(`SELECT * FROM User`);
+        //console.log(users.length); 
+        res.render('viewUsers',{acc: req.acc, userData: users, count: users.length});
+    }else{
+        res.redirect('/login');
+    }
 });
 
-router.get('/viewArtistsAdmin', (req, res)=>{
-    let artists = db.query(`SELECT * FROM Artist`)
-    res.render('viewArtistsAdmin',{artistData: artists, count: artists.length});
+
+
+router.get('/viewArtistsAdmin', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        let artists = db.query(`SELECT * FROM Artist`)
+        res.render('viewArtistsAdmin',{acc: req.acc, artistData: artists, count: artists.length});
+    }else{
+        res.redirect('/login');
+    }
+
 });
 
-router.get('/viewSongsAdmin', (req, res)=>{
-    let songs = db.query(`SELECT * FROM Song`)
-    res.render('viewSongsAdmin',{songData: songs, count: songs.length});
+router.get('/viewSongsAdmin', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        let songs = db.query(`SELECT * FROM Song`)
+        res.render('viewSongsAdmin',{acc: req.acc, songData: songs, count: songs.length});
+
+    }else{
+        res.redirect('/login');
+    }
 });
 
-router.post('/viewCMActivity', (req, res)=>{
+router.post('/viewCMActivity', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        const startDate = req.body.dateStart + ' 00:00:00';
+        const endDate = req.body.dateEnd + ' 23:59:59';
+        var users;
+        var userCount = 0;
+        var artists;
+        var artistCount = 0;
+        var songs;
+        var songCount = 0;
+
+        if(req.body.dataGroups == 'User'){
+            users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ? ORDER BY dateTime_created_user ASC`,[startDate, endDate]);
+            userCount = users.length;
+
+        }else if(req.body.dataGroups == 'Musician'){
+            artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ? ORDER BY dateTime_created_artist ASC`,[startDate, endDate]);
+            artistCount = artists.length;
+
+        }else if(req.body.dataGroups == 'All accounts (User and Musician)'){
+            users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ? ORDER BY dateTime_created_user ASC`,[startDate, endDate]);
+            artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ? ORDER BY dateTime_created_artist ASC`,[startDate, endDate]);
+            userCount = users.length;
+            artistCount = artists.length;
+
+        }else if(req.body.dataGroups == 'Song'){
+            songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ? ORDER BY release_date ASC`,[req.body.dateStart, req.body.dateEnd]);
+            songCount = songs.length;
+
+        }else if(req.body.dataGroups == 'Song and Musician'){
+            songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ? ORDER BY release_date ASC`,[req.body.dateStart, req.body.dateEnd]);
+            artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ? ORDER BY dateTime_created_artist ASC`,[startDate, endDate]);
+            artistCount = artists.length;
+            songCount = songs.length;
+
+        }else if(req.body.dataGroups == 'Song and User'){
+            songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ? ORDER BY release_date ASC`,[req.body.dateStart, req.body.dateEnd]);
+            users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ? ORDER BY dateTime_created_user ASC`,[startDate, endDate]);
+            userCount = users.length;
+            songCount = songs.length;
+
+        }else if(req.body.dataGroups == 'Song and all accounts (User and Musician)'){
+            users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ? ORDER BY dateTime_created_user ASC`,[startDate, endDate]);
+            artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ? ORDER BY dateTime_created_artist ASC`,[startDate, endDate]);
+            songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ? ORDER BY release_date ASC`,[req.body.dateStart, req.body.dateEnd]);
+            artistCount = artists.length;
+            userCount = users.length;
+            songCount = songs.length;
+
+        }
+
+        
+
+        res.render('viewCMActivity', {acc: req.acc, formData: req.body, userData: users, userCount: userCount, artistData: artists, artistCount: artistCount, songData: songs, songCount: songCount});
+
+    }else{
+        res.redirect('/login');
+    }
     //req.body = has dataGroups, activityYear, dateStart, dateEnd
         /*
     let users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ?`,[startDate, endDate]);
     let artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ?`,[startDate, endDate]);
     let songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ?`,[req.body.dateStart, req.body.dateEnd]);
     */
-    const startDate = req.body.dateStart + ' 00:00:00';
-    const endDate = req.body.dateEnd + ' 23:59:59';
-    var users;
-    var userCount = 0;
-    var artists;
-    var artistCount = 0;
-    var songs;
-    var songCount = 0;
+    
+});
 
-    if(req.body.dataGroups == 'User'){
-        users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ? ORDER BY dateTime_created_user ASC`,[startDate, endDate]);
-        userCount = users.length;
+router.get('/deleteSongs', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        res.render('deleteSongs',{acc: req.acc});
+    }else{
+        res.redirect('/login');
+    }  
+});
 
-    }else if(req.body.dataGroups == 'Musician'){
-        artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ? ORDER BY dateTime_created_artist ASC`,[startDate, endDate]);
-        artistCount = artists.length;
-
-    }else if(req.body.dataGroups == 'All accounts (User and Musician)'){
-        users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ? ORDER BY dateTime_created_user ASC`,[startDate, endDate]);
-        artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ? ORDER BY dateTime_created_artist ASC`,[startDate, endDate]);
-        userCount = users.length;
-        artistCount = artists.length;
-
-    }else if(req.body.dataGroups == 'Song'){
-        songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ? ORDER BY release_date ASC`,[req.body.dateStart, req.body.dateEnd]);
-        songCount = songs.length;
-
-    }else if(req.body.dataGroups == 'Song and Musician'){
-        songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ? ORDER BY release_date ASC`,[req.body.dateStart, req.body.dateEnd]);
-        artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ? ORDER BY dateTime_created_artist ASC`,[startDate, endDate]);
-        artistCount = artists.length;
-        songCount = songs.length;
-
-    }else if(req.body.dataGroups == 'Song and User'){
-        songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ? ORDER BY release_date ASC`,[req.body.dateStart, req.body.dateEnd]);
-        users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ? ORDER BY dateTime_created_user ASC`,[startDate, endDate]);
-        userCount = users.length;
-        songCount = songs.length;
-
-    }else if(req.body.dataGroups == 'Song and all accounts (User and Musician)'){
-        users = db.query(`SELECT * FROM User WHERE dateTime_created_user >= ? AND dateTime_created_user < ? ORDER BY dateTime_created_user ASC`,[startDate, endDate]);
-        artists = db.query(`SELECT * FROM Artist WHERE dateTime_created_artist >= ? AND dateTime_created_artist < ? ORDER BY dateTime_created_artist ASC`,[startDate, endDate]);
-        songs = db.query(`SELECT * FROM Song WHERE release_date >= ? AND release_date < ? ORDER BY release_date ASC`,[req.body.dateStart, req.body.dateEnd]);
-        artistCount = artists.length;
-        userCount = users.length;
-        songCount = songs.length;
-
+//pressed button to delete song
+router.post('/deleteSongs', authController.getAccount, (req, res)=>{
+    /* req.body:
+    [Object: null prototype] {
+  reason: 'Inappropriate Content',
+  description: 'm',
+  songId: '06eed8a7-795d-4586-abce-21540b933922',
+  artistId: '00d8b12f-3425-41d4-b64a-8c621c33cca6'
+}
+    */
+    if(req.acc){
+        res.render('deleteSongs', {acc: req.acc});
+    }else{
+        res.redirect('/login');
     }
 
-    
-
-    res.render('viewCMActivity', {formData: req.body, userData: users, userCount: userCount, artistData: artists, artistCount: artistCount, songData: songs, songCount: songCount});
 });
+
+
+router.get('/viewReportsAdmin', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        res.render('viewReportsAdmin',{acc: req.acc});
+    }else{
+        res.redirect('/login');
+    }  
+});
+
+router.get('/admin_index', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        res.render('admin_index',{acc: req.acc});
+    }else{
+        res.redirect('/login');
+    }  
+});
+
+
+
+////////////////////////////ANTONIO'S
+
 
 router.get('/create_report', (req, res) =>{
-    console.log('Get');
     res.render('create_report');
 });
+
 router.get('/hourReport', (req, res) =>{
     console.log('Get');
     res.render('hourReport');
@@ -425,12 +559,5 @@ router.get('/filter',authController.getAccount, (req, res) =>{
     }
 });
 
-router.get('/viewReportsAdmin', (req, res)=>{
-    res.render('viewReportsAdmin');
-});
-
-router.get('/admin_index', (req, res)=>{
-    res.render('admin_index');
-});
 
 module.exports = router;

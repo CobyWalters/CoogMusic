@@ -13,55 +13,51 @@
 <body>
 
 <nav>
-        <h4> CoogMusic
-        </h4>
+        <h1> CoogMusic
+        </h1>
             <ul>
-                
-                <!-- <action="/user_index" method="POST" name={{message}}>Home </li> -->
-                
-                <li> <a href="/admin_index">Home</a>  </li>
-                <li> <a href="/viewArtists">View Artists</a>  </li>
-                <li> <a href="/viewReportsAdmin">Reports</a></li>
-                <li> <a href="/">Sign Out</a></li>
-                
+                <li> <a href="/artist_index">Home</a> </li>
+                <li> <a href="/viewArtists">View Artists</a> </li>
+                <li> <a href="/uploadMusic">Upload Music</a> </li>
+                <li> <a href="/viewReportsArtist">View Reports</a> </li>
+                <li> <a href="/editArtistProfile">Edit Settings</a> </li>
+                <li> <a href="/auth/logout">Sign Out</a> </li>
             </ul>
         
     </nav>
 
     <div class="container mt-4"> 
+        <h2>CoogMusic insights for your {{acc.followerCount}} followers</h2>
         <button onclick="window.print()" type="button" class="btn btn-danger">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                         <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
                         <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
                         </svg>
-                        Download User Report
+                        Download CoogMusic insights Report
         </button>
-        <table class="table">
-            <caption>Total number of users: {{count}}</caption>
+        <br><br>
+                    <h2> <br>Account group: User</h2>
+            
+            <table class="table">
+                <caption style="font-size:medium;"><b> Total number of users that played your song: {{userData.length}} </b></caption>
             <thead>
                 <tr>
-                <th scope="col">User_id</th>
-                <th scope="col">Username</th>
-                <th scope="col">Name</th>
-                <th scope="col">Email</th>
-                <th scope="col">Country</th>
                 <th scope="col">Age</th>
-                <th scope="col">Password</th>
+                <th scope="col">Country</th>
+                <th scope="col">Date account created</th>
                 
                 </tr>
             </thead>
                 <tbody>
                     {{#each userData}}
-                        <tr>
-                            <td>{{this.user_id}}</td>
-                            <td>@{{this.user_name}}</td>
-                            <td>{{this.user_name_display}}</td>
-                            <td>{{this.user_email}}</td>
-                            <td>{{this.country}}</td>
-                            <td>{{this.age}}</td>
-                            <td>{{this.user_password}}</td>
-                        </tr>
+                    <tr>
+                        <td>{{this.age}}</td>
+                        <td>{{this.country}}</td>
+                        <td>{{this.dateTime_created_user}}</td>
+
+                    </tr>
                     {{/each}}
+                    
                 
                 </tbody>
             </table>

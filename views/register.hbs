@@ -34,19 +34,22 @@
         <div class="input-group mb-2 mr-sm-2">
             <div class="input-group-prepend">
             <div class="input-group-text">@</div>
+
             </div>
-            <input type="text" class="form-control" placeholder="Username" id="username" name="username" required>
+            <input type="text" class="form-control" onkeypress="return event.charCode != 32" placeholder="Username" id="username" name="username" required>
+            
         </div>
+        <small id="usernamehelp" class="form-text text-muted">Must be a unique username</small>
 
         <div class="form-group" style="padding-top: 25px;">
             <label for="name">Name</label>
-            <input type="text" class="form-control" id="name" name="name">
+            <input type="text" class="form-control" id="name" name="name" required>
         </div>
     
         <div class="form-group" style="padding-top: 25px;">
             <label for="email">Email address</label>
             <input type="email" class="form-control" id="email" aria-describedby="emailHelp" placeholder="Enter email" name="email" required>
-            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+            <small id="emailHelp" class="form-text text-muted">Must be a unique email</small>
         </div>
 
         <div class="form-group" style="padding-top: 25px;">
