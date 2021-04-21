@@ -27,7 +27,7 @@
     </nav>
 
     <div class="container mt-4"> 
-        <h2>CoogMusic insights for your song "{{formData.dataGroups}}"" from {{formData.dateStart}} to {{formData.dateEnd}}</h2>
+        <h2>CoogMusic insights for your {{acc.followerCount}} followers</h2>
         <button onclick="window.print()" type="button" class="btn btn-danger">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-download" viewBox="0 0 16 16">
                         <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
@@ -36,38 +36,7 @@
                         Download CoogMusic insights Report
         </button>
         <br><br>
-        <h2> Your song has a total of: {{songData.plays}} plays. <br>In this genre of {{genre}}, the average number of plays per song is {{genreAvg}}.</h2>
-        <h3> <br>Below is the demographic of the people that played your song.</h3>
-        <table class="table">
-            <thead>
-                <tr>
-                <th scope="col">Account type</th>
-                <th scope="col">Date and time when played</th>
-                
-                </tr>
-            </thead>
-                <tbody>
-                    {{#each playData}}
-                        {{#if this.played_by_user_id}}
-                        <tr>
-                            <td>User</td>
-                            <td>{{this.dateTime_Play}}</td>
-                            
-                        </tr>
-                        {{/if}}
-                        {{#if this.played_by_artist_id}}
-                        <tr>
-                            <td>Musician</td>
-                            <td>{{this.dateTime_Play}}</td>
-                        </tr>
-                        {{/if}}
-
-                    {{/each}}
-                
-                </tbody>
-            </table>
-
-            <h2> <br>Account group: User</h2>
+                    <h2> <br>Account group: User</h2>
             
             <table class="table">
                 <caption style="font-size:medium;"><b> Total number of users that played your song: {{userData.length}} </b></caption>
@@ -92,34 +61,6 @@
                 
                 </tbody>
             </table>
-
-        <h2> <br>Account group: Musician</h2>
-        <table class="table">
-            <caption style="font-size:medium;"><b> Total number of musicians that played your song: {{artistData.length}} </b></caption>
-            <thead>
-                <tr>
-                <th scope="col">Age</th>
-                <th scope="col">Follower count</th>
-                <th scope="col">Country</th>
-                <th scope="col">Date account created</th>
-                
-                </tr>
-            </thead>
-                <tbody>
-                    {{#each artistData}}
-                    <tr>
-                        <td>{{this.age}}</td>
-                        <td>{{this.followerCount}}</td>
-                        <td>{{this.country}}</td>
-                        <td>{{this.dateTime_created_artist}}</td>
-
-                    </tr>
-                    {{/each}}
-                    
-                
-                </tbody>
-            </table>
-       
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>    

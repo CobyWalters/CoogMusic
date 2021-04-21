@@ -149,15 +149,65 @@ router.get('/viewReportsArtist', authController.getAccount, (req, res)=>{
     }
 });
 
+router.post('/followerInsights', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        //console.log(req.body);
+        usersTable = db.query(`SELECT * FROM Follow F INNER JOIN User U ON FIND_IN_SET(F.followed_by_user_id, U.user_id) WHERE F.following_artist_id = ?`,[req.acc.artist_id]);
+        //console.log(usersTable);
+        res.render('followerInsights', {acc: req.acc, userData: usersTable});
+    }else{
+        res.redirect('/login');
+    }
+});
+
+
 router.post('/songInsights', authController.getAccount, (req, res)=>{
     if(req.acc){
         var songData;
+        var playData;
+        var genreAvg;
+        var genre;
         if(req.body.dataGroups == 'All of my songs'){
             songData = db.query(`SELECT * FROM Song WHERE artist_idB = ?`,[req.acc.artist_id]);
         }else{
             songData = db.query(`SELECT * FROM Song WHERE song_name = ? AND artist_idB = ?`,[req.body.dataGroups, req.acc.artist_id]);
+            playData = db.query(`SELECT * FROM countPlays WHERE song_id_played = ?`,[songData[0].song_id]);
+            genreAvg = db.query(`SELECT AVG(plays) AS avg FROM Song WHERE genre_idB = ?`, [songData[0].genre_idB]);
+
+            //userId = db.query(`SELECT played_by_user_id FROM countPlays WHERE song_id_played = ?`,[songData[0].song_id]);
+            //console.log(userId);
+            usersTable = db.query(`SELECT * FROM countPlays C INNER JOIN User U ON FIND_IN_SET(C.played_by_user_id, U.user_id) WHERE C.song_id_played = ?`,[songData[0].song_id]);
+            artistsTable = db.query(`SELECT * FROM countPlays C INNER JOIN Artist A ON FIND_IN_SET(C.played_by_artist_id, A.artist_id) WHERE C.song_id_played = ?`,[songData[0].song_id]);
+            
+            //console.log(usersTable);
+            //console.log(artistsTable);
+            if(songData[0].genre_idB == 0){
+                genre = 'Hip-Hop';
+            }else if(songData[0].genre_idB == 1){
+                genre = 'Pop';
+            }else if(songData[0].genre_idB == 10){
+                genre = 'Rock';
+            }else if(songData[0].genre_idB == 2){
+                genre = 'Pop';
+            }else if(songData[0].genre_idB == 3){
+                genre = 'Country';
+            }else if(songData[0].genre_idB == 4){
+                genre = 'EDM';
+            }else if(songData[0].genre_idB == 5){
+                genre = 'Classical';
+            }else if(songData[0].genre_idB == 6){
+                genre = 'Techno';
+            }else if(songData[0].genre_idB == 7){
+                genre = 'Alternative';
+            }else if(songData[0].genre_idB == 8){
+                genre = 'R&B';
+            }else if(songData[0].genre_idB == 9){
+                genre = 'Latin';
+            }
+            //console.log(playData);
+            //console.log(songData[0].plays);
         }
-        res.render('songInsights', {acc: req.acc, formData: req.body, songData: songData});
+        res.render('songInsights', {acc: req.acc, formData: req.body, songData: songData[0], playData: playData, genreAvg: genreAvg[0].avg, genre: genre, userData: usersTable, artistData: artistsTable});
     }else{
         res.redirect('/login');
     }
@@ -356,6 +406,73 @@ router.post('/viewCMActivity', (req, res)=>{
     
 
     res.render('viewCMActivity', {formData: req.body, userData: users, userCount: userCount, artistData: artists, artistCount: artistCount, songData: songs, songCount: songCount});
+});
+
+router.get('/create_report', (req, res) =>{
+    console.log('Get');
+    res.render('create_report');
+});
+router.get('/hourReport', (req, res) =>{
+    console.log('Get');
+    res.render('hourReport');
+});
+
+router.get('/countryReport', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        let artists = db.query(`SELECT * FROM Artist`);
+        let countries = db.query(`SELECT DISTINCT country FROM Artist`);
+        let nArtists = db.query(`SELECT COUNT(*) FROM Artist`);
+        n = countries.length;
+        countries.forEach(country => {
+            nArtistsC = db.query(`SELECT COUNT (*) FROM Artist WHERE country = `+`'`+country.country+`'`);
+            percentage = nArtistsC/nArtists*100
+            country.number = JSON.stringify(nArtistsC);  
+            
+        });
+        
+        res.render('countryReport', {acc: req.acc, artistData: artists, country: countries});
+    }else{
+        res.redirect('/login');
+    }
+});
+
+router.get('/ageReport', authController.getAccount, (req, res) =>{
+    if(req.acc){
+        let artists = db.query(`SELECT * FROM Artist`);
+        let groups = ['-18','18-25','26-35','36-45','46-55','56-65','65+'];
+        let ageN = [];
+        ageN[0] = db.query(`SELECT COUNT(*) FROM Artist WHERE age < 18`);
+        ageN[1] = db.query(`SELECT COUNT(*) FROM Artist WHERE age BETWEEN 18 AND 25`);
+        ageN[2] = db.query(`SELECT COUNT(*) FROM Artist WHERE age BETWEEN 26 AND 35`);
+        ageN[3] = db.query(`SELECT COUNT(*) FROM Artist WHERE age BETWEEN 36 AND 45`);
+        ageN[4] = db.query(`SELECT COUNT(*) FROM Artist WHERE age BETWEEN 46 AND 55`);
+        ageN[5] = db.query(`SELECT COUNT(*) FROM Artist WHERE age BETWEEN 56 AND 65`);
+        ageN[6] = db.query(`SELECT COUNT(*) FROM Artist WHERE age > 65`);
+        
+        ageN[0] = JSON.stringify(ageN[0]);
+        ageN[1] = JSON.stringify(ageN[1]);
+        ageN[2] = JSON.stringify(ageN[2]);
+        ageN[3] = JSON.stringify(ageN[3]);
+        ageN[4] = JSON.stringify(ageN[4]);
+        ageN[5] = JSON.stringify(ageN[5]);
+        ageN[6] = JSON.stringify(ageN[6]);
+        
+        
+
+        res.render('ageReport', {acc: req.acc, artistData: artists, group: groups, ageNum: ageN});
+    }else{
+        res.redirect('/login');
+    }
+});
+
+router.get('/filter',authController.getAccount, (req, res) =>{
+    console.log('Get');
+    if(req.acc){
+        let artists = db.query(`SELECT * FROM Artist`);
+        res.render('filter', {acc: req.acc, artistData: artists});
+    }else{
+        res.redirect('/login');
+    }
 });
 
 router.get('/viewReportsAdmin', (req, res)=>{
