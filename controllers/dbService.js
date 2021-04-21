@@ -61,7 +61,7 @@ class DbService {
         try {
             const response = await new Promise((resolve, reject) => {
                 const query = `SELECT song_id, song_name, artist_name_display, song_audio_path, song_img_path, plays FROM Song WHERE artist_idB=${artist_id.substring(1)}`;
-                console.log(query);
+                //console.log(query);
                 connection.query(query, (err, results) => {
                     if (err) reject(new Error(err.message));
                     resolve(results);
@@ -76,7 +76,7 @@ class DbService {
     async getSongDisplays() {
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = "SELECT song_id, song_name, artist_name_display, song_audio_path, song_img_path, plays FROM Song;";
+                const query = "SELECT song_id, song_name, artist_name_display, song_audio_path, song_img_path, plays, artist_idB FROM Song;";
                 connection.query(query, (err, results) => {
                     if (err) reject(new Error(err.message));
                     resolve(results);

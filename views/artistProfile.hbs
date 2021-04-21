@@ -38,6 +38,19 @@
                 <li> <a href="/auth/logout">Sign Out</a> </li>
             </ul>
             {{/if}} 
+
+            {{#ifeq acc 'admin'}}
+            <ul>
+                
+                <!-- <action="/user_index" method="POST" name={{message}}>Home </li> -->
+                
+                <li> <a href="/admin_index">Home</a>  </li>
+                <li> <a href="/viewArtists">View Artists</a>  </li>
+                <li> <a href="/viewReportsAdmin">Reports</a></li>
+                <li> <a href="/">Sign Out</a></li>
+                
+            </ul>
+          {{/ifeq}}    
         
     </nav>
 

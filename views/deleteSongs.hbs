@@ -20,15 +20,16 @@
                 <!-- <action="/user_index" method="POST" name={{message}}>Home </li> -->
                 
                 <li> <a href="/admin_index">Home</a>  </li>
-                <li><a href="/deleteSongs"> Delete Songs</a></li>
+                <li><a href=""> Delete Songs</a></li>
                 <li> <a href="/viewArtists">View Artists</a>  </li>
                 <li> <a href="/viewReportsAdmin">Reports</a></li>
-                <li> <a href="/auth/logout">Sign Out</a></li>
+                <li> <a href="/">Sign Out</a></li>
                 
             </ul>
         
     </nav>
-        <div class="home-page-container" id="bottom"> 
+
+    <div class="home-page-container" id="bottom"> 
             <div class="navigation-container" style="order: 1">
                 <input class="search-bar" id="search-bar" type="text" placeholder="Search..">
                 <hr class="my-1 margin-10-percent">
@@ -36,34 +37,35 @@
             <div id="explore-pane" class="central-container" style="order: 2">
                 <h1 class="display-4 margin-10-percent"><b>Welcome back, ADMIN</b></h1>
                 <p class="lead margin-10-percent">Keep up to date with all your followed musicians</p>
+                
+                
+                
+                <div class="container mt-4"> 
+                        
+                        <div id="deleteNotif">
+
+                        <!--
+                            code from JS goes here
+                         -->
+                    </div>
+            
+                </div>
+               
+
+
+
                 <hr class="my-4 margin-10-percent">
-                <div id="song-container"></div>
+                <div id="song-container">
+                </div>
                 <div class="song-container-bottom-margin"></div>
             </div>
 
         </div>
-        
-        <div class="song-bar-container">
-            <div class="song-bar-text-container">
-                <h6 id="title"></h6>
-                <h6 id="artist"></h6>
-            </div>
-            <div class="duration-bar-container">
-                <button class="play-button" onclick="togglePlay()" id="play">
-                    <i class="fa fa-play" aria-hidden="true"></i>
-                </button>
-                <div class="duration-bar">
-                    <input type="range" min="0" max="100" value="0" id="duration_slider" onchange="changeDuration()">
-                </div>
-            </div>
-            <div class="volume-bar-container">
-                <i class="fa fa-volume-up" aria-hidden="true" onclick="muteSound()" id="volume_icon"></i>
-                <input type="range" min="0" max="100" value="50" onchange="volumeChange()" id="volume">
-            </div>
-        </div>
+
+    
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta3/dist/js/bootstrap.bundle.min.js" integrity="sha384-JEW9xMcG8R+pH31jmWH6WWP0WintQrMb4s7ZOdauHnUtxwoG2vI5DkLtS3qm9Ekf" crossorigin="anonymous"></script>
-        <script src="/admin_index.js"></script>   
+        <script src="/delete_admin_index.js"></script>   
     
 </body>
 </html>
