@@ -409,6 +409,16 @@ router.get('/viewSongsAdmin', authController.getAccount, (req, res)=>{
     }
 });
 
+router.get('/viewDeleteLogAdmin', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        let deleteLogs = db.query(`SELECT * FROM DeleteLog`)
+        res.render('viewDeleteLogAdmin',{acc: req.acc, deleteData: deleteLogs});
+
+    }else{
+        res.redirect('/login');
+    }
+});
+
 router.post('/viewCMActivity', authController.getAccount, (req, res)=>{
     if(req.acc){
         const startDate = req.body.dateStart + ' 00:00:00';

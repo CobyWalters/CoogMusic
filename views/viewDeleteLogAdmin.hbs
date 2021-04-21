@@ -37,24 +37,32 @@
                         </svg>
                         Download Songs Report
         </button>
-
         <table class="table">
-            <caption>Total number of songs: {{count}}</caption>
+            <caption>Total number of deleted songs: {{deleteData.length}}</caption>
             <thead>
                 <tr>
                 <th scope="col">Song name</th>
-                <th scope="col">Artist name</th>
-                <th scope="col">Release date</th>
-                <th scope="col">Number of plays</th>
+                <th scope="col">Reason for deletion</th>
+                <th scope="col">Description of deletion</th>
+                <th scope="col">Date of deletion</th>
+                <th scope="col">Notified artist?</th>
                 </tr>
             </thead>
                 <tbody>
-                    {{#each songData}}
+                    {{#each deleteData}}
                         <tr>
-                            <td>{{this.song_name}}</td>
-                            <td>{{this.artist_name}}</td>
-                            <td>{{this.release_date}}</td>
-                            <td>{{this.plays}}</td>
+                            <td>{{this.song_name_deleting}}</td>
+                            <td>{{this.reason}}</td>
+                            <td>{{this.descriptionLog}}</td>
+                            <td>{{this.when}}</td>
+                            {{#ifeq this.msgShown 1}}
+                            <td>yes</td>
+                            {{/ifeq}}
+
+                            {{#ifeq this.msgShown 0}}
+                            <td>no</td>
+                            {{/ifeq}}
+                            
                         </tr>
                     {{/each}}
                 
