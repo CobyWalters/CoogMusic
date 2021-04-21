@@ -29,7 +29,6 @@ class DbService {
         try {
             const response = await new Promise((resolve, reject) => {
                 const query = `SELECT * FROM Notification WHERE user_id=\"${id}\" OR header_text=\"Sponsored\"`;
-                console.log(query);
                 connection.query(query, (err, results) => {
                     if (err) reject(new Error(err.message));
                     resolve(results);
@@ -61,7 +60,6 @@ class DbService {
         try {
             const response = await new Promise((resolve, reject) => {
                 const query = `SELECT song_id, song_name, artist_name_display, song_audio_path, song_img_path, plays FROM Song WHERE artist_idB=${artist_id.substring(1)}`;
-                //console.log(query);
                 connection.query(query, (err, results) => {
                     if (err) reject(new Error(err.message));
                     resolve(results);

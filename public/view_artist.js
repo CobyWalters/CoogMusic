@@ -18,13 +18,8 @@ function loadArtistSongs(data) {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify({songId: event.currentTarget.song_data["song_id"]}),
-             })
-            .then(response => response.json())
-            .then(data => loadExplorePane(data['data']));
+             });
             playSong(event.currentTarget.song_data);
-            //+1 NUMBER OF PLAYS
-            console.log("Eee");
-            //console.log("SD: " + event.currentTarget.song_data["plays"]);
         });
         var image = document.createElement("img");
         if (data[i]["song_img_path"] == "") {
@@ -39,13 +34,13 @@ function loadArtistSongs(data) {
         song_item_text.classList.add("song-item-text-container");
         var song_name = document.createElement("h6");
         song_name.innerHTML = data[i]["song_name"];
-        var artist_name = document.createElement("h6");
+        var artist_name_display = document.createElement("h6");
 
-        artist_name.innerHTML = data[i]["artist_name"];
+        artist_name_display.innerHTML = data[i]["artist_name_display"];
         var plays = document.createElement("h5");
         plays.innerHTML = 'Number of plays: '+ data[i]["plays"];
         song_item_text.append(song_name);
-        song_item_text.append(artist_name);
+        song_item_text.append(artist_name_display);
         song_item_text.append(plays);
         song_item.append(image);
         song_item.append(song_item_text);
@@ -79,19 +74,12 @@ function playSong(song_data) {
 	track.src = "/song_audio/" + song_data["song_audio_path"];
 	title.innerHTML = song_data["song_name"];	
 	//track_image.src = "/song_images/" + song_data["song_img_path"];
-    artist.innerHTML = song_data["artist_name"];	
+    artist.innerHTML = song_data["artist_name_display"];	
     track.load();
     track.play();
     play.innerHTML = '<i class="fa fa-pause" aria-hidden="true"></i>';
     playing_song = true;
 	timer = setInterval(rangeSlider, 1000);
-
-
-   
-    console.log("JJJ");
-
-    //song_data["plays"] = song_data["plays"]+1;
-    //console.log(song_data["plays"]);
 }
 
 function muteSound() {
