@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const artist_name = document.getElementById('artist-name').innerHTML;
-    console.log(artist_name);
-    fetch(`http://localhost:5000/getArtistSongs/:\"${artist_name}\"`)
+    const artist_id = document.getElementById('artist-id').value;
+    console.log(artist_id);
+    fetch(`http://localhost:5000/getArtistSongs/:\"${artist_id}\"`)
     .then(response => response.json())
     .then(data => loadArtistSongs(data['data']));
 });

@@ -7,6 +7,8 @@ document.addEventListener('DOMContentLoaded', function () {
         .then(data => loadNotificationPane(data['data']));
 });
 
+document.getElementById("search-bar").addEventListener('input', filterSongs);
+
 function timeSince(date) {
 
     const _MS_PER_DAY = 1000 * 60 * 60 * 24;
@@ -64,10 +66,10 @@ function loadNotificationPane(data) {
         data2.classList.add("notification-data2");
         var song_name = document.createElement("h5");
         song_name.innerHTML = data[i]["song_name"];
-        var artist_name = document.createElement("h5");
-        artist_name.innerHTML = data[i]["artist_name"];
+        var artist_name_display = document.createElement("h5");
+        artist_name_display.innerHTML = data[i]["artist_name_display"];
         data2.append(song_name);
-        data2.append(artist_name);
+        data2.append(artist_name_display);
         data1.append(image);
         data1.append(data2);
         body.append(data1);
@@ -113,19 +115,23 @@ function loadExplorePane(data) {
         song_item_text.classList.add("song-item-text-container");
         var song_name = document.createElement("h6");
         song_name.innerHTML = data[i]["song_name"];
-        var artist_name = document.createElement("h6");
+        var artist_name_display = document.createElement("h6");
 
-        artist_name.innerHTML = data[i]["artist_name"];
+        artist_name_display.innerHTML = data[i]["artist_name_display"];
         var plays = document.createElement("h5");
         plays.innerHTML = 'Number of plays: ' + data[i]["plays"];
         song_item_text.append(song_name);
-        song_item_text.append(artist_name);
+        song_item_text.append(artist_name_display);
         song_item_text.append(plays);
         song_item.append(image);
         song_item.append(song_item_text);
         song_container.append(song_item);
     }
 
+}
+
+function filterSongs(input) {
+    const search_text = input.currentTarget.value;
 }
 
 // MUSIC PLAYER
