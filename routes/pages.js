@@ -6,6 +6,7 @@ const authController = require('../controllers/auth');
 const mysql = require('sync-mysql');
 const mysqladd = require('mysql2');
 const e = require('express');
+var moment = require('moment');
 
 /* Middleware functions included:
 exports.viewUsers
@@ -225,7 +226,38 @@ router.get('/successRegister_Artist', authController.getAccount, (req, res)=>{
 
 router.get('/artist_index', authController.getAccount, (req, res)=>{
     if(req.acc){
-        res.render('artist_index', {acc: req.acc});
+        let results = db.query(`SELECT violationDescription, violationType FROM Artist WHERE artist_id = ?`,[req.acc.artist_id]);
+        let songNames = db.query(`SELECT song_name_deleting FROM DeleteLog WHERE artist_id_of_song = ? AND msgShown=0`,[req.acc.artist_id]);
+        console.log(songNames);
+        let violationType = '';
+        let violationDesc = '';
+        let violationMsg = '';
+
+        let violationArray = [];
+
+        if(results[0].violationDescription != ''){
+            violationType =  results[0].violationType
+            violationDesc = results[0].violationDescription;
+            console.log(results);
+
+            for(let i = 0; i < songNames.length; i++){
+                violationMsg+="Warning: Your song '"+ songNames[i].song_name_deleting + "' has been deleted because of: " + violationType + ". Description: " + violationDesc;
+                violationArray.push(violationMsg);
+                violationMsg = '';
+            }
+            //console.log(violationArray);
+
+
+            //console.log(violationArray.length);
+            //console.log(violationArray[0]);
+            //clear msg
+            db2.query(`UPDATE Song SET violationDescription = '' WHERE artist_idB  =  ?`, [req.acc.artist_id]);
+            db2.query(`UPDATE Song SET violationType = '' WHERE artist_idB  =  ?`, [req.acc.artist_id]);
+            db2.query(`UPDATE DeleteLog SET msgShown=1 WHERE artist_id_of_song = ?`, [req.acc.artist_id]);
+        }
+
+        
+        res.render('artist_index', {acc: req.acc, violationType: violationType, violationMsg: violationArray});
     }else{
         res.redirect('/login');
     }
@@ -462,8 +494,13 @@ router.post('/deleteSongs', authController.getAccount, (req, res)=>{
   artistId: '00d8b12f-3425-41d4-b64a-8c621c33cca6'
 }
     */
+   console.log(req.body);
     if(req.acc){
-        res.render('deleteSongs', {acc: req.acc});
+        var date = new Date();
+        var formatDate = moment(date).format('YYYY-MM-DD HH:mm:ss');
+        db2.query(`INSERT INTO DeleteLog SET ?`, {song_id_deleted: req.body.songId, artist_id_of_song: req.body.artistId, reason: req.body.reason, descriptionLog: req.body.description, when: formatDate, song_name_deleting: req.body.songName});
+        let message = "Deleted song";
+        res.render('deleteSongs', {acc: req.acc, msg: message});
     }else{
         res.redirect('/login');
     }

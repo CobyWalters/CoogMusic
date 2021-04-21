@@ -37,6 +37,13 @@
             <div id="explore-pane" class="central-container" style="order: 2">
                 <h1 class="display-4"><b>Welcome back, {{acc.artist_name_display}} (@{{acc.artist_name}})</b></h1>
                 <p class="lead">Keep up to date with all your fellow musicians</p>
+                <div  id="violate">
+
+                
+                {{#each violationMsg}}
+                <h4 class="alert alert-danger mt-4">{{this}}
+                {{/each}}
+                </div>
                 <hr class="my-4 margin-10-percent">
                 <div id="song-container"></div>
                 <div class="song-container-bottom-margin"></div>

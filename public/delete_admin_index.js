@@ -52,6 +52,7 @@ function loadExplorePane(data) {
             //console.log("Eee");
             //console.log("SD: " + event.currentTarget.song_data["plays"]); 
             var clickedSong = event.currentTarget.song_data;      
+            var songName = `${clickedSong["song_name"]}`;
             
             deleteBox.innerHTML = 
             "<br>" +
@@ -72,6 +73,7 @@ function loadExplorePane(data) {
             "<button type=\"submit\" class=\"btn btn-primary\">Delete song</button>" + 
             "<input style=\"display:none;\" type=\"text\" name=\"songId\" value=" + clickedSong["song_id"] + ">" +
             "<input style=\"display:none;\" type=\"text\" name=\"artistId\" value=" + clickedSong["artist_idB"] + ">" +
+            "<input style=\"display:none;\" type=\"text\" name=\"songName\" value=" + `"${clickedSong["song_name"]}"` + ">" +
             "</form>" + " " +
             "<form action=\"/deleteSongs\" method=\"GET\" id=\"del2button\">" + 
             "<button type=\"submit\" class=\"btn btn-primary\" style = \"padding-left: 10px\";>Cancel</button>" +
