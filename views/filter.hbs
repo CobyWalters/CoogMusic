@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+ 
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>  
+    <nav>
+        <h1> CoogMusic
+        </h1>
+            <ul>
+                <li> <a href="/user_index">Home </a> </li>
+                <li> <a href="/ViewMusicUser">View Music </a> </li>
+                <li> <a href="/viewArtists">View Artists </a> </li>
+                <li> <a href="/CreatePlaylist">Create Playlist </a> </li>
+                <li> <a href="/editProfile">Edit Profile </a> </li>
+                <li> <a href="/auth/logout">Sign Out </a> </li>
+                <li> <a href="/create_report">Create Report </a></li>
+            </ul>
+        
+    </nav>
+  <h2>Filter Different Artists</h2>
+  <p>Type something to search the list for specific Artists:</p>  
+  <input class="form-control" id="myInput" type="text" placeholder="Search..">
+  
+    <div class="container mt-4"> 
+    
+        {{#eachRow artistData 4}}
+            <div class="row">
+                {{#each columns}}
+
+            <div class="list-group" id = "myList">
+                <li class="list-group-item">{{this.artist_name}} {{this.country}} {{this.age}}</li>
+                
+                
+            </div>
+
+
+                {{/each}}
+
+            </div>
+
+        {{/eachRow}}
+        
+
+    </div>
+</div>
+
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myList li").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+
+</body>
+</html>

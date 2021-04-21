@@ -5,6 +5,7 @@ const authController = require('../controllers/auth');
 
 const mysql = require('sync-mysql');
 const mysqladd = require('mysql2');
+const e = require('express');
 
 /* Middleware functions included:
 exports.viewUsers
@@ -62,7 +63,7 @@ router.get('/getNotifications', authController.getAccount, (request, response) =
     } else{
         res.redirect('/login');
     }
-})
+});
 
 router.get('/getSongDisplays', (request, response)=>{
     const db = dbService.getDbServiceInstance();
@@ -70,6 +71,36 @@ router.get('/getSongDisplays', (request, response)=>{
     result
     .then(data => response.json({data : data}))
     .catch(err => console.log(err));
+});
+
+router.get('/getArtistSongs/:artist_name', (request, response)=>{
+    const db = dbService.getDbServiceInstance();
+    const result = db.getArtistSongs(request.params.artist_name);
+    result
+    .then(data => response.json({data : data}))
+    .catch(err => console.log(err));
+});
+
+router.post('/updateCount', authController.getAccount, (request, response)=>{
+    if(request.acc){
+        //console.log("EENNNNN");
+        const db = dbService.getDbServiceInstance();
+        var result = null;
+        if (request.acc.user_id) {
+            result = db.updateCount('', request.acc.user_id, request.body.songId);
+        } else if (request.acc.artist_id) {
+            result = db.updateCount(request.acc.artist_id, '', request.body.songId);
+        }
+        //console.log('update done');
+        
+        result
+        .then(data => response.json({data : data}))
+        .catch(err => console.log(err));
+        
+    }else{
+        res.redirect('/login');
+    }
+
 });
 
 /*
@@ -107,7 +138,26 @@ router.get('/editArtistProfile', authController.getAccount, (req, res)=>{
 
 router.get('/viewReportsArtist', authController.getAccount, (req, res)=>{
     if(req.acc){
-        res.render('viewReportsArtist', {acc: req.acc});
+        let songs = db.query(`SELECT * FROM Song WHERE artist_idB = ?`,[req.acc.artist_id]);
+        var moreThanOneSong = false;
+        if(songs.length > 1){
+            moreThanOneSong = true;
+        }
+        res.render('viewReportsArtist', {acc: req.acc, songData: songs, moreThanOneSong: moreThanOneSong});
+    }else{
+        res.redirect('/login');
+    }
+});
+
+router.post('/songInsights', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        var songData;
+        if(req.body.dataGroups == 'All of my songs'){
+            songData = db.query(`SELECT * FROM Song WHERE artist_idB = ?`,[req.acc.artist_id]);
+        }else{
+            songData = db.query(`SELECT * FROM Song WHERE song_name = ? AND artist_idB = ?`,[req.body.dataGroups, req.acc.artist_id]);
+        }
+        res.render('songInsights', {acc: req.acc, formData: req.body, songData: songData});
     }else{
         res.redirect('/login');
     }
@@ -307,6 +357,73 @@ router.post('/viewCMActivity', (req, res)=>{
 
     res.render('viewCMActivity', {formData: req.body, userData: users, userCount: userCount, artistData: artists, artistCount: artistCount, songData: songs, songCount: songCount});
 });
+
+router.get('/create_report', (req, res) =>{
+    console.log('Get');
+    res.render('create_report');
+});
+router.get('/hourReport', (req, res) =>{
+    console.log('Get');
+    res.render('hourReport');
+});
+
+router.get('/countryReport', authController.getAccount, (req, res)=>{
+    if(req.acc){
+        let artists = db.query(`SELECT * FROM Artist`);
+        let countries = db.query(`SELECT DISTINCT country FROM Artist`);
+        let nArtists = db.query(`SELECT COUNT(*) FROM Artist`);
+        n = countries.length;
+        countries.forEach(country => {
+            nArtistsC = db.query(`SELECT COUNT (*) FROM Artist WHERE country = `+`'`+country.country+`'`);
+            percentage = nArtistsC/nArtists*100
+            country.number = JSON.stringify(nArtistsC);  
+            
+        });
+        
+        res.render('countryReport', {acc: req.acc, artistData: artists, country: countries});
+    }else{
+        res.redirect('/login');
+    }
+});
+
+router.get('/ageReport', authController.getAccount, (req, res) =>{
+    if(req.acc){
+        let artists = db.query(`SELECT * FROM Artist`);
+        let groups = ['-18','18-25','26-35','36-45','46-55','56-65','65+'];
+        let ageN = [];
+        ageN[0] = db.query(`SELECT COUNT(*) FROM Artist WHERE age < 18`);
+        ageN[1] = db.query(`SELECT COUNT(*) FROM Artist WHERE age BETWEEN 18 AND 25`);
+        ageN[2] = db.query(`SELECT COUNT(*) FROM Artist WHERE age BETWEEN 26 AND 35`);
+        ageN[3] = db.query(`SELECT COUNT(*) FROM Artist WHERE age BETWEEN 36 AND 45`);
+        ageN[4] = db.query(`SELECT COUNT(*) FROM Artist WHERE age BETWEEN 46 AND 55`);
+        ageN[5] = db.query(`SELECT COUNT(*) FROM Artist WHERE age BETWEEN 56 AND 65`);
+        ageN[6] = db.query(`SELECT COUNT(*) FROM Artist WHERE age > 65`);
+        
+        ageN[0] = JSON.stringify(ageN[0]);
+        ageN[1] = JSON.stringify(ageN[1]);
+        ageN[2] = JSON.stringify(ageN[2]);
+        ageN[3] = JSON.stringify(ageN[3]);
+        ageN[4] = JSON.stringify(ageN[4]);
+        ageN[5] = JSON.stringify(ageN[5]);
+        ageN[6] = JSON.stringify(ageN[6]);
+        
+        
+
+        res.render('ageReport', {acc: req.acc, artistData: artists, group: groups, ageNum: ageN});
+    }else{
+        res.redirect('/login');
+    }
+});
+
+router.get('/filter',authController.getAccount, (req, res) =>{
+    console.log('Get');
+    if(req.acc){
+        let artists = db.query(`SELECT * FROM Artist`);
+        res.render('filter', {acc: req.acc, artistData: artists});
+    }else{
+        res.redirect('/login');
+    }
+}
 
 router.get('/viewReportsAdmin', (req, res)=>{
     res.render('viewReportsAdmin');

@@ -63,10 +63,10 @@ exports.upload = function(req, res){
     // rename files
     var song_audio_path = songId + "." + "mp3";
 
-    if (file_Img.mimetype == "image/jpeg"){
+    if (file_Img.mimetype == "image/jpeg") {
         song_img_path = songId + "." + "jpeg";
     }
-    else{
+    else {
         song_img_path = songId + "." + "png";
     }
 
@@ -108,7 +108,6 @@ exports.upload = function(req, res){
 
         // get audio file path
         var path = require('path').dirname(__dirname);
-        path = path.substr(2);
         // console.log(invertSlashes(path));
 
         //get song duration 
@@ -140,9 +139,8 @@ exports.upload = function(req, res){
         return res.render('uploadMusic', {
             message: 'Song was Uploaded'
         })
-        
 
-    }else{
+    } else {
         message = "This format is not allowed , please upload file with '.png','.jpg'";
         res.render('uploadMusic',{message: message});
     }

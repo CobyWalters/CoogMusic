@@ -79,8 +79,6 @@ h6 {
     grid-gap: 10px;
     grid-template-columns: repeat(auto-fill, 310px);
     justify-content:space-evenly;
-    /*height:400px;*/
-    overflow: scroll;
 }
 
 
@@ -102,6 +100,11 @@ h6 {
     flex-direction: column;
     align-items: left;
     justify-content: center;
+}
+
+.song-container-bottom-margin {
+   width: 100%;
+   height: 100px;
 }
 
 .notifications-container {
