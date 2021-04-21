@@ -84,7 +84,7 @@ exports.login  = (req, res) =>{
     if(results.length <= 0 && results2.length <=0){
         console.log('DNE');
         return res.render('login', {
-            message: 'Try again: Username or password do not match'
+            message: 'Try again: Username does not exist'
         });
 
     }else{
@@ -97,9 +97,16 @@ exports.login  = (req, res) =>{
         if(results.length <= 0){
 
             //results is empty so results2 has  user = we are  looking at ARTISTS
+            if(results2[0].password != password){
+                return res.render('login', {
+                    message: 'Try again: Incorrect password'
+                });
+            }
 
             //Create our cookie. Cookie will store the unique artist id and that it is of type Artist
             //Will store like: {id: ###, type: Artist}
+            
+
             const token = jwt.sign({id: results2[0].artist_id, type: 'Artist'}, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXPIRES_IN} );
 
                 const cookieOptions = {
@@ -117,6 +124,12 @@ exports.login  = (req, res) =>{
         }else{
             //Otherwise, account exists in the User table
             //Same thing as above, except now we specify type of User instead of Artist
+            if(results[0].password != password){
+                return res.render('login', {
+                    message: 'Try again: Incorrect password'
+                });
+            }
+
             const token = jwt.sign({id: results[0].user_id, type: 'User'}, process.env.TOKEN_SECRET, {expiresIn: process.env.TOKEN_EXPIRES_IN} );
 
             const cookieOptions = {
@@ -245,6 +258,21 @@ exports.register =  (req, res)=>{
             message: 'Try again: That username is already in use by musician'
         });
     }
+
+    //check if email exists
+    results = db.query(`SELECT user_email FROM User WHERE user_email = ?`, [email]);
+    if(results.length > 0){
+        return res.render('register', {
+            message: 'Try again: That email is already in use'
+        });
+    } 
+
+    results = db.query(`SELECT artist_email FROM Artist WHERE artist_email = ?`, [email]);
+    if(results.length > 0){
+        return res.render('register', {
+            message: 'Try again: That email is already in use'
+        });
+    } 
 
     //Passwords need to match
     if(password != password2){
