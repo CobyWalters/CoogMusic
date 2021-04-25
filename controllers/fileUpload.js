@@ -1,14 +1,8 @@
-const jwt = require('jsonwebtoken');
 const mysql = require('sync-mysql');
 const mysqladd = require('mysql2');
 const { v4: uuidv4 } = require('uuid');
-const e = require('express');
 const fs = require('fs');
-const { getAudioDurationInSeconds } = require('get-audio-duration');
-const mp3Duration = require('mp3-duration');
 const getmp3Duration = require('get-mp3-duration');
-const { count } = require('console');
-const math = require('mathjs');
 
 //use db for queries, don't need to update anything
 const db = new mysql({
