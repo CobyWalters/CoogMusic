@@ -33,68 +33,63 @@ exports.upload = function(req, res){
     var post  = req.body;
     var song_Name= post.songName;
     var artist_Name= post.artistName;
-    var album_Name= post.albumName;
     var release_Date= post.releaseDate;
     var artistId = post.artistId;
     var genre = post.genre;
     
-    
+    // Data Validation
     if (!post.songName){
-        message = "Please Enter Song Name";
-        return res.render('uploadMusic.hbs',{message: message});
+        req.flash('message', "Please Enter Song Name")
+        return res.redirect('/uploadMusic');
     }
 
     if (!post.releaseDate){
-        message = "Please Enter Release Date";
-        return res.render('uploadMusic.hbs',{message: message});
+        req.flash('message', "Please Enter Release Date")
+        return res.redirect('/uploadMusic');
     }
 
     if (post.genre == 'Select Genre'){
-        message = "Please Enter Genre";
-        return res.render('uploadMusic.hbs',{message: message});
+        req.flash('message', "Please Enter Genre")
+        return res.redirect('/uploadMusic');
     }
 
     if (req.files.songMP3 == undefined){
-        message = "No MP3 files were uploaded!";
-        return res.render('uploadMusic.hbs',{message: message});
+        req.flash('message', "No mp3 files were uploaded!")
+        return res.redirect('/uploadMusic');
 
     }else if(req.files.songImg == undefined){
-        message = "No Image files were uploaded!";
-        return res.render('uploadMusic.hbs',{message: message});
+        req.flash('message', "No Image files were uploaded!")
+        return res.redirect('/uploadMusic');
     }
     else if(!req.files){
-        message = "No files were uploaded!";
-        return res.render('uploadMusic.hbs',{message: message});
+        req.flash('message', "No files were uploaded!")
+        return res.redirect('/uploadMusic');
     }
 
+    //data valadation for duplicate songs
+    songCheck = db.query(`SELECT song_name FROM Song WHERE song_name = ? AND artist_name_display = ?`,[song_Name, artist_Name]);
+    if(songCheck.length > 0){
+        if(songCheck[0].song_name == song_Name){
+            req.flash('message', "Song Has Already Been Uploaded")
+            return res.redirect('/uploadMusic');
+        }
+    }
   
-    //get file stuff
+    //requested files from artist
     var file_Img = req.files.songImg;
     var img_name = file_Img.name;
     var file_Audio = req.files.songMP3;
     var audio_name = file_Audio.name;
-
-
-    //get song duration 
-    //const buffer = fs.readFileSync('/Users/Student/Desktop/CoogMusic/CoogMusic/public/song_audio/'+audio_name);
-    //var duration = getmp3Duration(buffer);
-    //duration = duration/1000;
-  
-
 
     // generate songId
     var songId = uuidv4();
 
     // rename files
     var song_audio_path = songId + "." + "mp3";
+    var song_img_path = songId + "." + "png";
+  
 
-    if (file_Img.mimetype == "image/jpg") {
-        song_img_path = songId + "." + "jpg";
-    }
-    else {
-        song_img_path = songId + "." + "png";
-    }
-
+    //invert slashes in path
     const invertSlashes = str => {
         let res = '';
         for(let i = 0; i < str.length; i++){
@@ -107,40 +102,30 @@ exports.upload = function(req, res){
         return res;
     };
     
-    //assign table values
+    //Query genreid from genre table
     var genre_idB = db.query(`SELECT genre_id FROM Genre WHERE genre_name = ?`, [genre]);
-    if (genre_idB.length == 0){
-        message = "Please Enter Genre";
-        return res.render('uploadMusic.hbs',{message: message});
-    }
     var genre_idB = genre_idB[0].genre_id;
-
     var plays = 0;
 
     //foreign keys = genre_idB, album_idB, artist_idB
-
+    //check if img is of type jpg or png
     if(file_Img.mimetype == "image/jpeg" || file_Img.mimetype == "image/png" ){
 
-        
+        //upload audio file to remote folder
         file_Audio.mv('public/song_audio/'+file_Audio.name, function(err){
             if(err)
                 return res.status(500).send(err);
-
-            
         });
+        // get audio file path
+        var path = require('path').dirname(__dirname);
 
-        // // get audio file path
-        // var path = require('path').dirname(__dirname);
-        // path = path.substr(3);
-
-        // //get song duration 
-        // const buffer = fs.readFileSync(invertSlashes(path)+"/public/song_audio/"+songId + ".mp3");
+        //get song duration 
+        const buffer = fs.readFileSync(invertSlashes(path)+"/public/song_audio/"+file_Audio.name);
         
-        // var duration = getmp3Duration(buffer);
-        // duration = duration/1000;
-        duration = math.floor(math.random() *(200-100))+100
+        var duration = getmp3Duration(buffer);
+        duration = duration/1000;
 
-                                    
+        //upload image file to remote folder                 
         file_Img.mv('public/song_images/'+ file_Img.name, function(err) {
                             
             if (err) {
@@ -150,30 +135,24 @@ exports.upload = function(req, res){
             db2.query(`INSERT INTO Song SET ?`,{song_name: song_Name, artist_idB: artistId, artist_name_display: artist_Name, genre_idB: genre_idB, song_id: songId, release_date: release_Date, song_duration: duration, plays: plays, song_audio_path: song_audio_path, song_img_path: song_img_path});
 
         });
-
+        // get path for image and audio files and rename using unique id
         var path = require('path').dirname(__dirname);
         fs.rename(invertSlashes(path)+"/public/song_audio/"+audio_name, invertSlashes(path)+"/public/song_audio/" + songId + ".mp3", function(err) {
             if ( err ) console.log('ERROR: ' + err);
         });
-        if (file_Img.mimetype == "image/jpg") {
-
-            fs.rename(invertSlashes(path)+"/public/song_images/"+img_name, invertSlashes(path)+"/public/song_images/" + songId + ".jpg", function(err) {
-                if ( err ) console.log('ERROR: ' + err);
-            });
-        }
-        else{
-            fs.rename(invertSlashes(path)+"/public/song_images/"+img_name, invertSlashes(path)+"/public/song_images/" + songId + ".png", function(err) {
-                if ( err ) console.log('ERROR: ' + err);
-            });
-        }
-
-        return res.render('uploadMusic', {
-            message: 'Song was Uploaded'
-        })
+        
+        fs.rename(invertSlashes(path)+"/public/song_images/"+img_name, invertSlashes(path)+"/public/song_images/" + songId + ".png", function(err) {
+            if ( err ) console.log('ERROR: ' + err);
+        });
+        
+        req.flash('message', "Song Was Uploaded")
+        return res.redirect('/uploadMusic');
 
     } else {
-        message = "This format is not allowed , please upload file with '.png','.jpg'";
-        res.render('uploadMusic',{message: message});
+        //data valadation
+        req.flash('message', "This format is not allowed , please upload file with '.png','.jpg'")
+        return res.redirect('/uploadMusic');
+
     }
     
 };
@@ -182,40 +161,59 @@ exports.delete = (req, res) =>{
     var post = req.body;
     var songName = post.songName;
     var artistName= post.artistName;
-    console.log(songName);
-    console.log(artistName);
 
-    //delete Plays
+    //delete foreign constraint from plays tablePlays
     var songId = db.query(`SELECT song_id FROM Song WHERE song_name = ?`, [songName]);
-    console.log(songId);
+    // data valadation
     if (songId == 0){
-        return res.render('uploadMusic', {
-            message2: 'Song Name was left empty or Song has not been uploaded yet'
-        });
+        req.flash('message2', "Song Name was left empty or Song has not been uploaded yet")
+        return res.redirect('/uploadMusic');
     }
+    // get countplays from plays table
     var countPlays = db.query(`SELECT Plays From Song WHERE song_name = ? AND song_Id = ?`,[songName, songId[0].song_id]);
     var delete_song = db.query(`SELECT song_id From Song WHERE song_name = ? AND Plays=?`,[songName, countPlays[0].Plays]);
     db2.query(`DELETE FROM countPlays WHERE song_id_Played = ?`, [delete_song[0].song_id])
 
     //Delete from song from song table
-    let sqlDeleteSongs = `DELETE FROM Song WHERE song_name = ?`;
-    db2.query(sqlDeleteSongs, songName, (err, result, field) =>{
+    let sqlDeleteSongs = `DELETE FROM Song WHERE song_name = ? AND artist_name_display = ?`;
+    db2.query(sqlDeleteSongs, [songName, artistName], (err, result, field) =>{
         if(err){
-            return res.render('uploadMusic', {
-                message2: 'Song Name was left empty or Song has not been uploaded yet'
-            });
+            req.flash('message2', "Song Name was left empty or Song has not been uploaded yet");
+            return res.redirect('/uploadMusic');
         }
         else{
-            // fs.unlink(invertSlashes(path)+"/public/song_images/" + songId + ".jpg", function(err){
-            //     if (err) {
-            //         throw err
-            //     } else {
-            //         console.log("Successfully deleted the file.");
-            //     }
-            // })
-            return res.render('uploadMusic', {
-                message2: 'Song was Deleted'
-            })
+            //invert slashes in path
+            const invertSlashes = str => {
+                let res = '';
+                for(let i = 0; i < str.length; i++){
+                   if(str[i] !== '\\'){
+                      res += str[i];
+                      continue;
+                   };
+                   res += '/';
+                };
+                return res;
+            };
+            
+            // //Delete files from server
+            var path = require('path').dirname(__dirname);
+            
+            //Delete image files
+            try {
+            fs.unlinkSync(invertSlashes(path)+"/public/song_images/" + songId[0].song_id+ ".png");
+            console.log("Successfully deleted the image file.")
+            } catch(err) {
+            throw err
+            }
+            // delete audio files
+            try {
+                fs.unlinkSync(invertSlashes(path)+"/public/song_audio/" + songId[0].song_id+ ".mp3");
+                console.log("Successfully deleted the audio file.")
+                } catch(err) {
+                throw err
+                }
+            req.flash('message2', "Song Was Deleted");
+            return res.redirect('/uploadMusic');
         }
     });
 };

@@ -236,7 +236,7 @@ router.get('/artist_index', authController.getAccount, (req, res)=>{
 router.get('/uploadMusic', authController.getAccount, (req, res) =>{
 
     if(req.acc){
-        res.render('uploadMusic', {acc: req.acc});
+        res.render('uploadMusic', {acc: req.acc, message: req.flash('message'), message2: req.flash('message2')});
     }else{
         res.redirect('/login');
     }
