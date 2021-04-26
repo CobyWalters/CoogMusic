@@ -59,7 +59,7 @@ class DbService {
         console.log(artist_id);
         try {
             const response = await new Promise((resolve, reject) => {
-                const query = `SELECT song_id, song_name, artist_name_display, song_audio_path, song_img_path, plays FROM Song WHERE artist_idB=${artist_id.substring(1)}`;
+                const query = `SELECT song_id, song_name, artist_name_display, song_audio_path, song_img_path, plays FROM Song WHERE artist_idB=${artist_id.substring(1)} AND isDeleted=0`;
                 connection.query(query, (err, results) => {
                     if (err) reject(new Error(err.message));
                     resolve(results);

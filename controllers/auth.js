@@ -96,7 +96,7 @@ exports.login  = (req, res) =>{
     if(results.length <= 0 && results2.length <=0){
         console.log('DNE');
         return res.render('login', {
-            message: 'Try again: Username does not exist'
+            message: 'Try again: Username or Password do not match'
         });
 
     }else{
@@ -112,7 +112,7 @@ exports.login  = (req, res) =>{
             if(results2[0].artist_password != password){
                 console.log("RESULTS: "+ results2[0])
                 return res.render('login', {
-                    message: 'Try again: Incorrect password'
+                    message: 'Try again: Username or Password do not match'
                 });
             }
 
@@ -263,7 +263,7 @@ exports.register =  (req, res)=>{
     let results = db.query(`SELECT user_name FROM User WHERE user_name = ?`, [username]);
     if(results.length > 0){
         return res.render('register', {
-            message: 'Try again: That username is already in use by another user'
+            message: 'Try again: That username is already in use'
         });
     }
 
@@ -271,7 +271,7 @@ exports.register =  (req, res)=>{
     results = db.query(`SELECT artist_name FROM Artist WHERE artist_name = ?`, [username]);
     if(results.length > 0){
         return res.render('register', {
-            message: 'Try again: That username is already in use by musician'
+            message: 'Try again: That username is already in use'
         });
     }
 

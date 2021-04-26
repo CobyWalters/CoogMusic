@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-    fetch('https://coogmusic.xyz/getSongDisplays')
+    fetch('http://localhost:5000/getSongDisplays')
         .then(response => response.json())
         .then(data => loadExplorePane(data['data']));
 });
