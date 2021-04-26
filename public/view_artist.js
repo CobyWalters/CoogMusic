@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
     const artist_id = document.getElementById('artist-id').value;
     console.log(artist_id);
-    fetch(`https://coogmusic.xyz/getArtistSongs/:\"${artist_id}\"`)
+    fetch(`http://localhost:5000/getArtistSongs/:\"${artist_id}\"`)
     .then(response => response.json())
     .then(data => loadArtistSongs(data['data']));
 });

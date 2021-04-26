@@ -37,6 +37,18 @@
                         </svg>
                         Download Musician Report
         </button>
+        <div class="form-group" style="padding-top: 25px;">
+                            <label for="dataGroups">Filter data</label>
+                            <select class="form-control" id="dataGroups" name="dataGroups">
+                            <option>All Musicians</option>
+                            <option>Musicians in USA</option>
+                            <option>Musicians in Mexico</option>
+                            <option>Musicians in Canada</option>
+                            <option>Musicians in Greenland</option>
+                            <option>Sort by most followers to least</option>
+                            <option>Sort by least followers to most</option>
+                            </select>
+        </div>
         <table class="table">
             <caption>Total number of musicians: {{count}}</caption>
             <thead>
